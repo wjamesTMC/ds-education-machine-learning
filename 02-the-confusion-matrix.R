@@ -12,7 +12,7 @@ library(ggplot2)
 library(Lahman)
 library(HistData)
 library(caret)
-install.packages("caret")
+library(e1071)
 
 # We start by briefly introducing the caret package, which has several useful
 # functions for building and assessing machine learning methods.
@@ -297,7 +297,7 @@ prev
 
 # The caret function confusionMatrix computes all these metrics for us once we
 # define what a positive is. The function expects factors as input and the first
-# level is considered the “positive” outcome or Y=1Y=1. In our example, Female
+# level is considered the “positive” outcome or Y=1 Y=1. In our example, Female
 # is the first level because it comes before Male alphabetically:
 
 confusionMatrix(data = y_hat, reference = test_set$sex)
