@@ -150,7 +150,7 @@ accuracy <- map_dbl(cutoff, function(x){
 
 # We can make a plot showing the accuracy on the training set for males and females
 
-     # <insert code for plot when available>
+guessing %>% qplot(cutoff, accuracy, data =., xlab = "Cutoff", ylab = "Accuracy") + geom_line()
      
 # We see that the maximum value is:
      
