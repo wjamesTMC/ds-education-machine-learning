@@ -38,7 +38,6 @@ y_hat <- sample(c("Male", "Female"), length(test_index), replace = TRUE, prob=c(
 mean(y_hat == test_set$sex)
 #> [1] 0.718
 
-
 # But, as described above, this would come at the cost of lower sensitivity. The
 # curves we describe in this section will help us see this.
 
