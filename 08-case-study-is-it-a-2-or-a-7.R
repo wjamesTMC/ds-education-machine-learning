@@ -28,7 +28,7 @@ library(e1071)
 # We then select a random sample of 1,000 digits, 500 in the training set and
 # 500 in the test set and provide them here:
      
-data("mnist_27")
+data("mnist_27") # Listed as not available for 3.5.1
 
 # We can explore this data by plotting the two predictors and by using colors to
 # denote the labels:
