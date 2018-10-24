@@ -62,7 +62,7 @@ x <- heights$height
 # data into training and test sets:
 
 set.seed(2)
-test_index <- createDataPartition(y, times = 1, p = 0.5, list = FALSE)
+test_index <- createDataPartition(y, times = 1, p = 0.3, list = FALSE)
 
 # The argument times is used to define how many random samples of indexes to
 # return, the argument p is used to define what proportion of the data is
@@ -100,7 +100,9 @@ y_hat <- sample(c("Male", "Female"), length(test_index), replace = TRUE)
       
 y_hat <- sample(c("Male", "Female"), length(test_index), replace = TRUE) %>%
      factor(levels = levels(test_set$sex))
-# [Output is a list of 525 entries and the two factors, Male and Female]
+y_hat
+# [Output is a list of n entries (depnding on p) and the two factors, Male and
+# Female]
 
 # The overall accuracy is simply defined as the overall proportion that is
 # predicted correctly:
@@ -236,27 +238,29 @@ prev
 # from the confusion matrix. A general improvement to using overall accuracy is
 # to study sensitivity and specificity separately.
 
-# Sensitivity and Specificity To define sensitivity and specificity, we need a
-# binary outcome. When the outcomes are categorical, we can define these terms
-# for a specific category. In the digits example, we can ask for the specificity
-# in the case of correctly predicting 2 as opposed to some other digit. Once we
-# specify a category of interest, then we can talk about positive outcomes,
-# Y=1Y=1, and negative outcomes, Y=0Y=0. In general, sensitivity is defined as
-# the ability of an algorithm to predict a positive outcome when the actual
-# outcome is positive: call ^Y=1Y^=1 whenever Y=1Y=1. Because an algorithm that
-# calls everything positive (^Y=1Y^=1 no matter what) has perfect sensitivity,
-# this metric on its own is not enough to judge an algorithm. For this reason,
-# we also examine specificity, which is generally defined as the ability of an
-# algorithm to not to predict a positive ^Y=0Y^=0 when the actual outcome is not
-# a positive Y=0Y=0. We can summarize in the following way:
+# Sensitivity and Specificity
+#
+# To define sensitivity and specificity, we need a binary outcome. When the
+# outcomes are categorical, we can define these terms for a specific category.
+# In the digits example, we can ask for the specificity in the case of correctly
+# predicting 2 as opposed to some other digit. Once we specify a category of
+# interest, then we can talk about positive outcomes, Y=1, and negative
+# outcomes, Y=0. In general, sensitivity is defined as the ability of an
+# algorithm to predict a positive outcome when the actual outcome is positive:
+# call ^Y=1 whenever Y=1. Because an algorithm that calls everything positive
+# (Y^=1 no matter what) has perfect sensitivity, this metric on its own is not
+# enough to judge an algorithm. For this reason, we also examine specificity,
+# which is generally defined as the ability of an algorithm to not to predict a
+# positive Y^=0 when the actual outcome is not a positive Y=0. We can summarize
+# in the following way:
 
-#     * High sensitivity: Y=1⟹^Y=1Y=1⟹Y^=1
-#     * High specificity: Y=0⟹^Y=0Y=0⟹Y^=0
+#     * High sensitivity: Y=1⟹^Y=1
+#     * High specificity: Y=0⟹^Y=0
 
 # Another way to define specificity is by the proportion of positive calls that
 # are actually positive:
 
-#     * High specificity: ^Y=1⟹Y=1Y^=1⟹Y=1.
+#     * High specificity: ^Y=1⟹Y=1.
 
 # To provide a precise definition, we name the four entries of the confusion
 # matrix
@@ -295,7 +299,7 @@ prev
 # Specificity       Positive Predictive      Precision TP/(TP+FP)     Pr(Y=1∣^Y=1)
 #                   value (PPV)
 
-# The caret function confusionMatrix computes all these metrics for us once we
+# The caret function confusionMatrix() computes all these metrics for us once we
 # define what a positive is. The function expects factors as input and the first
 # level is considered the “positive” outcome or Y=1 Y=1. In our example, Female
 # is the first level because it comes before Male alphabetically:
@@ -347,11 +351,11 @@ confusionMatrix(data = y_hat, reference = test_set$sex)
 # F1F1-score, a widely used one number summary, is the harmonic average of
 # precision and recall:
 
-     1 / (1/2) * ((1 / recall) + (1 / precision))
+#    1 / (1/2) * ((1 / recall) + (1 / precision))
      
 # Because it is easier to write, you often see this harmonic average rewritten as:
      
-     2((precision - recall) / (precision + recall))
+#    2((precision - recall) / (precision + recall))
 
 # ...when defining F1F1. 
 
