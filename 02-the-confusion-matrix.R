@@ -62,7 +62,7 @@ x <- heights$height
 # data into training and test sets:
 
 set.seed(2)
-test_index <- createDataPartition(y, times = 1, p = 0.3, list = FALSE)
+test_index <- createDataPartition(y, times = 1, p = 0.5, list = FALSE)
 
 # The argument times is used to define how many random samples of indexes to
 # return, the argument p is used to define what proportion of the data is
