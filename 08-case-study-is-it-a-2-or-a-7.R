@@ -13,6 +13,11 @@ library(Lahman)
 library(HistData)
 library(caret)
 library(e1071)
+library(ggthemes)
+library(ggrepel)
+library(gridExtra)
+library(RColorBrewer)
+library(caret)
 
 # In the two simple examples above, we only had one predictor. We actually do
 # not consider these machine learning challenges, which are characterized by

@@ -14,17 +14,19 @@ library(HistData)
 library(caret)
 library(e1071)
 
-# Prevalence matters in practice A machine learning algorithm with very high
-# sensitivity and specificity may not be useful in practice when prevalence is
-# close to either 0 or 1. To see this, consider the case of a doctor that
-# specializes in a rare disease and is interested in developing an algorithm for
-# predicting who has the disease. The doctor shares data with you and you then
-# develop an algorithm with very high sensitivity. You explain that this means
-# that if a patient has the disease, the algorithm is very likely to predict
-# correctly. You also tell the doctor that you are also concerned because, based
-# on the dataset you analyzed, 1/2 the patients have the disease:
+# Prevalence matters in practice
+#
+# A machine learning algorithm with very high sensitivity and specificity may
+# not be useful in practice when prevalence is close to either 0 or 1. To see
+# this, consider the case of a doctor that specializes in a rare disease and is
+# interested in developing an algorithm for predicting who has the disease. The
+# doctor shares data with you and you then develop an algorithm with very high
+# sensitivity. You explain that this means that if a patient has the disease,
+# the algorithm is very likely to predict correctly. You also tell the doctor
+# that you are also concerned because, based on the dataset you analyzed, 1/2
+# the patients have the disease:
 
-#         Pr(^Y=1)Pr(Y^=1)
+#         Pr(Y^=1)
 
 # The doctor is neither concerned nor impressed and explains that what is
 # important is the precision of the test:
