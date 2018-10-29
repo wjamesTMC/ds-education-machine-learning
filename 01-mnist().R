@@ -103,4 +103,5 @@ read_mnist <- function(){
      }
      mnist
 }
-read_mnist
+read_mnist()
+y <- mnist$train$labels
