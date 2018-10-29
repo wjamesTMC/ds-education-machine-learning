@@ -95,4 +95,4 @@ read_mnist <- function(){
      }
      mnist
 }
-str(read_mnist)
+read_mnist
