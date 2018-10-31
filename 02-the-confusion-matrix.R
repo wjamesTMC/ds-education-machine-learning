@@ -394,7 +394,7 @@ F_1 <- map_dbl(cutoff, function(x){
 
 #     <<< Insert code when available >>>
      
-# We see that it is maximized at F1F1 value of:
+# We see that it is maximized at F1 value of:
      
 max(F_1)
 #> [1] 0.614
