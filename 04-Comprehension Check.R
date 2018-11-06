@@ -67,16 +67,6 @@ y_hat <- sample(c("Male", "Female"), length(test_index), replace = TRUE) %>%
 
 # GOOD TO THIS POINT ---------------------------------------------
 
-psm_ic <- ifelse(dat$type == "inclass", "Male", "Female")
-psf_ic <- ifelse(dat$type == "inclass", "Female", "Male")
-psm_ol <- ifelse(dat$type == "online", "Male", "Female")
-psf_ol <- ifelse(dat$type == "online", "Female", "Male")
-
-mean(psm_ic == dat$sex)
-mean(psf_ic == dat$sex)
-mean(psm_ol == dat$sex)
-mean(psf_ol == dat$sex)
-#
 # Read the # "textbook" that comes with the course:
 #
 # https://rafalab.github.io/dsbook/the-confusion-matrix-prevalence-sensitivity-and-specificity.html
@@ -121,7 +111,17 @@ mean(y_hat == test_set$sex)
 # above?
 
 
+# Working area - might be useful
+psm_ic <- ifelse(dat$type == "inclass", "Male", "Female")
+psf_ic <- ifelse(dat$type == "inclass", "Female", "Male")
+psm_ol <- ifelse(dat$type == "online", "Male", "Female")
+psf_ol <- ifelse(dat$type == "online", "Female", "Male")
 
+mean(psm_ic == dat$sex)
+mean(psf_ic == dat$sex)
+mean(psm_ol == dat$sex)
+mean(psf_ol == dat$sex)
+#
 # Working area - probably all wrong
 mean(y_hat == test_set$sex)
 # [1] 0.5066667
