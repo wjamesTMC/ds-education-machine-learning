@@ -33,7 +33,7 @@ heights %>% group_by(sex) %>% summarize(mean(height), sd(height))
 y_hat <- ifelse(x > 62, "Male", "Female") %>% factor(levels = levels(test_set$sex))
 mean(y == y_hat)
 
-utoff <- seq(61, 70)
+cutoff <- seq(61, 70)
 accuracy <- map_dbl(cutoff, function(x){
      y_hat <- ifelse(train_set$height > x, "Male", "Female") %>% factor(levels = levels(test_set$sex))
      mean(y_hat == train_set$sex)
@@ -48,6 +48,10 @@ y_hat <- ifelse(test_set$height > best_cutoff, "Male", "Female") %>%
 y_hat <- factor(y_hat)
 
 mean(y_hat == test_set$sex)
+
+#
+# END OF CODE FROM SECTION 01 - caret_package_training_and_test_sets-overall_accuracy
+#
 
 # The Confusion Matrix
 
@@ -81,10 +85,10 @@ summarize(accuracy = mean(y_hat == sex))
 # 2 Male      0.933
 
 # There is an imbalance in the accuracy for males and females: too many females
-# are predicted to be male. We are calling almost half of the females, males!
-# How can our overall accuracy be so high then? This is because the prevalence
-# of males in this dataset is high. These heights were collected from three data
-# sciences courses, two of which had more males enrolled:
+# are predicted to be male. In fact, we are calling almost half of the females,
+# males! How can our overall accuracy be so high then? This is because the
+# prevalence of males in this dataset is high. These heights were collected from
+# three data sciences courses, two of which had more males enrolled:
       
 prev <- mean(y == "Male")
 prev
@@ -119,13 +123,13 @@ prev
 # positive Y^=0 when the actual outcome is not a positive Y=0. We can summarize
 # in the following way:
 
-#     * High sensitivity: Y=1⟹^Y=1
-#     * High specificity: Y=0⟹^Y=0
+#     High sensitivity: Y=1⟹^Y=1- predict a positive outcome when actual is positive
+#     High specificity: Y=0⟹^Y=0 - not predict pos outcome when actual not positive
 
 # Another way to define specificity is by the proportion of positive calls that
 # are actually positive:
 
-#     * High specificity: ^Y=1⟹Y=1.
+#     High specificity: ^Y=1⟹Y=1.
 
 # To provide a precise definition, we name the four entries of the confusion
 # matrix
@@ -135,19 +139,20 @@ prev
 # Predicted positive     True positives (TP)      False positives (FP)
 # Predicted negative     False negatives (FN)     True negatives (TN)
 
-# Sensitivity is typically quantified by TP/(TP+FN)TP/(TP+FN), or the proportion
-# of actual positives (the first column or TP+FNTP+FN) that are called positives
-# TP. This quantity is referred to as the true positive rate(TPR) or recall.
+# SENSITIVITY is typically quantified by TP/(TP+FN), or the proportion of actual
+# positives (the first COLUMN or TP+FN) that are called positives TP. This
+# quantity is referred to as the true positive rate(TPR) or Recall.
 
-# Specificity is typically quantified as TN/(TN+FP)TN/(TN+FP) or the proportion
-# of negatives (the second column or FP+TNFP+TN) that are called negatives TN.
-# This quantity is also called the true negative rate (TNR). There is another
-# way of quantifying specificity which is TP/(TP+FP)TP/(TP+FP) or the proportion
-# of outcomes called positives (the first row or TP+FPTP+FP) that are actually
-# positives TPTP. This quantity is referred to as precision and also as positive
-# predictive value (PPV). Note that unlike TPR and TNR, precision depends on
-# prevalence since higher prevalence implies you can get higher precision even
-# when guessing. 
+# SPECIFICITY is typically quantified as TN/(TN+FP) or the proportion of
+# negatives (the second COLUMN or FP+TN) that are called negatives TN. This
+# quantity is also called the true negative rate (TNR). 
+
+# There is ANOTHER WAY OF QUANTIFYING SPECIFICITY,which is TP/(TP+FP) or the
+# proportion of outcomes called positives (the first ROW or TP+FP that are
+# actually positives TP. This quantity is referred to as PRECISION and also as
+# POSITIVE PREDICTIVE VALUE (PPV). Note that unlike TPR and TNR, precision
+# depends on THE prevalence since higher prevalence implies you can get higher
+# precision even when guessing.
 
 # The multiple names can be confusing, so we include a table to help us remember
 # the terms. The table includes a column that shows the definition if we think
@@ -156,6 +161,7 @@ prev
 # A measure of      Name 1                   Name 2    Definition     Probability representation
 # ------------      ------------------------ --------- ----------     --------------------------
 # Sensitivity       True positive rate (TPR) Recall    TP/(TP+FN)     Pr(^Y=1∣Y=1)
+#
 # Specificity       True negative rate (TNR) 1 minus   TN/(TN+FP)     Pr(^Y=0∣Y=0)
 #                                            false 
 #                                            positive 
@@ -165,36 +171,38 @@ prev
 #                   value (PPV)
 
 # The caret function confusionMatrix() computes all these metrics for us once we
-# define what a positive is. The function expects factors as input and the first
+# define what a positive is. The function expects factors as inputS and the first
 # level is considered the “positive” outcome or Y=1 Y=1. In our example, Female
-# is the first level because it comes before Male alphabetically:
+# is the first level because it comes before Male alphabetically: so if we type 
+# this line of code for our prediictions, we get this confusion matrix information
+# given to us all in one shot:
 
 confusionMatrix(data = y_hat, reference = test_set$sex)
 # Confusion Matrix and Statistics
 # 
-#           Reference
+# Reference
 # Prediction Female Male
-#     Female     81   67
-#     Male       38  339
-#                                         
-#                Accuracy : 0.8           
-#                  95% CI : (0.763, 0.833)
-#     No Information Rate : 0.773         
-#     P-Value [Acc > NIR] : 0.07819       
-#                                         
-#                   Kappa : 0.475         
-#  Mcnemar's Test P-Value : 0.00629       
-#                                         
-#             Sensitivity : 0.681         
-#             Specificity : 0.835         
-#          Pos Pred Value : 0.547         
-#          Neg Pred Value : 0.899         
-#              Prevalence : 0.227         
-#          Detection Rate : 0.154         
-#    Detection Prevalence : 0.282         
-#       Balanced Accuracy : 0.758         
-#                                         
-#        'Positive' Class : Female        
+# Female     50   27
+# Male       69  379
+# 
+# Accuracy : 0.8171          
+# 95% CI : (0.7814, 0.8493)
+# No Information Rate : 0.7733          
+# P-Value [Acc > NIR] : 0.008354        
+# 
+# Kappa : 0.4041          
+# Mcnemar's Test P-Value : 2.857e-05       
+# 
+# Sensitivity : 0.42017         
+# Specificity : 0.93350         
+# Pos Pred Value : 0.64935         
+# Neg Pred Value : 0.84598         
+# Prevalence : 0.22667         
+# Detection Rate : 0.09524         
+# Detection Prevalence : 0.14667         
+# Balanced Accuracy : 0.67683         
+# 
+# 'Positive' Class : Female         
 
 # We can see that the high overall accuracy is possible despite relatively low
 # sensitivity. As we hinted at above, the reason this happens is because of the
@@ -205,106 +213,5 @@ confusionMatrix(data = y_hat, reference = test_set$sex)
 # and specificity and not just accuracy. Before applying this algorithm to
 # general datasets, we need to ask ourselves if prevalence will be the same.
 
-# Balanced accuracy and F1 score
 
-# Although, in general, we recommend studying both specificity and sensitivity,
-# very often it is useful to have a one number summary, for example for
-# optimization purposes. One metric that is preferred over overall accuracy is
-# the average of specificity and sensitivity, referred to as balanced accuracy.
-# Because specificity and sensitivity are rates, it is more appropriate to
-# compute the harmonic average of specificity and sensitivity. In fact, the
-# F1F1-score, a widely used one number summary, is the harmonic average of
-# precision and recall:
-
-#    1 / (1/2) * ((1 / recall) + (1 / precision))
-     
-# Because it is easier to write, you often see this harmonic average rewritten as:
-     
-#    2((precision - recall) / (precision + recall))
-
-# ...when defining F1F1. 
-
-# Note that, depending on the context, some type of errors are more costly than
-# others. For example, in the case of plane safety, it is much more important to
-# maximize sensitivity over specificity: failing to predict a plane will
-# malfunction before it crashes is a much more costly error than grounding a
-# plane when, in fact, the plane is in perfect condition. In a capital murder
-# criminal case, the opposite is true since a false positive can lead to killing
-# an innocent person. The F1F1-score can be adapted to weigh specificity and
-# sensitivity differently. To do this, we define ββ to represent how much more
-# important sensitivity is compared to specificity and consider a weighted
-# harmonic average:
-#
-#                                    1
-#                  ____________________________________
-#
-#                      β2        1          1         1
-#                    ------ * ------  +  ------ * ---------
-#                    1 + β2   recall     1 + β2   precision
-#                                     
-# The F_meas function in the caret package computes this summary with beta
-# defaulting to 1.
-
-# Let’s rebuild our prediction algorithm, but this time maximizing the F-score
-# instead of overall accuracy:
-     
-cutoff <- seq(61, 70)
-F_1 <- map_dbl(cutoff, function(x){
-     y_hat <- ifelse(train_set$height > x, "Male", "Female") %>%
-          factor(levels = levels(test_set$sex))
-     F_meas(data = y_hat, reference = factor(train_set$sex))
-})
-
-# As before, we can plot these F1 measures versus the cutoffs:
-
-#     <<< Insert code when available >>>
-     
-# We see that it is maximized at F1 value of:
-     
-max(F_1)
-#> [1] 0.614
-
-# when we use cutoff:
-
-best_cutoff <- cutoff[which.max(F_1)]
-best_cutoff
-#> [1] 66
-
-# A cutoff of 66 makes much more sense than 64. Furthermore, it balances the
-# specificity and sensitivity of our confusion matrix:
-     
-y_hat <- ifelse(test_set$height > best_cutoff, "Male", "Female") %>%
-     factor(levels = levels(test_set$sex))
-
-confusionMatrix(data = y_hat, reference = test_set$sex)
-#> Confusion Matrix and Statistics
-#> 
-#>           Reference
-#> Prediction Female Male
-#>     Female     81   67
-#>     Male       38  339
-#>                                         
-#>                Accuracy : 0.8           
-#>                  95% CI : (0.763, 0.833)
-#>     No Information Rate : 0.773         
-#>     P-Value [Acc > NIR] : 0.07819       
-#>                                         
-#>                   Kappa : 0.475         
-#>  Mcnemar's Test P-Value : 0.00629       
-#>                                         
-#>             Sensitivity : 0.681         
-#>             Specificity : 0.835         
-#>          Pos Pred Value : 0.547         
-#>          Neg Pred Value : 0.899         
-#>              Prevalence : 0.227         
-#>          Detection Rate : 0.154         
-#>    Detection Prevalence : 0.282         
-#>       Balanced Accuracy : 0.758         
-#>                                         
-#>        'Positive' Class : Female        
-
-# We now see that we do much better than guessing, that both sensitivity and
-# specificity are relatively high, and that we have built our first machine
-# learning algorithm. It takes height as a predictor and predicts female, if you
-# are 66 inches or shorter.
 
