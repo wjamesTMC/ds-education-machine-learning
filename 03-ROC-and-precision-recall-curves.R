@@ -24,12 +24,12 @@ test_set <- heights[test_index, ]
 train_set <- heights[-test_index, ]
 y_hat <- sample(c("Male", "Female"), length(test_index), replace = TRUE)
 
-# When comparing the two methods: guessing versus using a height cutoff, we
-# looked at accuracy and F1. The second method clearly outperformed. However,
-# while we considered several cutoffs for the second method, for the first we
-# only considered one approach: guessing with equal probability. Note that
-# guessing Male with higher probability would give us higher accuracy due to the
-# bias in the sample:
+# When comparing two or more methods, for example, guessing versus using a
+# height cutoff, we looked at accuracy and F1. The second method - where we used
+# height - clearly outperformed. However, while we considered several cutoffs
+# for the second method, for the first we only considered one approach: guessing
+# with equal probability. Note that guessing Male with higher probability would
+# give us higher accuracy due to the bias in the sample:
      
 p <- 0.9
 y_hat <- sample(c("Male", "Female"), length(test_index), replace = TRUE, prob=c(p, 1-p)) %>% 
@@ -71,10 +71,10 @@ guessing <- map_df(probs, function(p){
 })
 guessing %>% qplot(FPR, TPR, data =., xlab = "1 - Specificity", ylab = "Sensitivity")
 
-# The ROC curve for guessing always looks like a straight line. A perfect
-# algorithm would shoot straight to 1 and stay up there: perfect sensitivity for
-# all values of specificity. So how does our second approach compare? We can
-# construct an ROC curve for the height based approach:
+# The ROC curve for guessing always looks like a straight line - the identiy
+# line. A perfect algorithm would shoot straight to 1 and stay up there: perfect
+# sensitivity for all values of specificity. So how does our second approach
+# compare? We can construct an ROC curve for the height based approach using this code:
      
 cutoffs <- c(50, seq(60, 75), 80)
 height_cutoff <- map_df(cutoffs, function(x){
@@ -95,10 +95,11 @@ geom_point() +
 xlab("1 - Specificity") +
 ylab("Sensitivity")
 
-# We can see that we obtain higher sensitivity with this approach for all values
-# of specificity, which implies it is in fact a better method.
+# We can see that we obtain higher sensitivity with the height-based approach
+# for all values of specificity, which implies it is in fact a better method.
 
-# When making ROC curves it is often nice to add the cutoff used to the points:
+# When making ROC curves it is often nice to add the cutoff used to the points.
+# It would look like this:
      
 map_df(cutoffs, function(x){
      y_hat <- ifelse(test_set$height > x, "Male", "Female") %>% 
@@ -143,7 +144,7 @@ bind_rows(guessing, height_cutoff) %>%
 # This is because the prevalence is low.
 
 # If we change positives to mean Male instead of Female, the ROC curve remains
-# the same, but the precision recall plot changes:
+# the same, but the precision recall plot changes, and it looks like this:
 
 guessing <- map_df(probs, function(p){
      y_hat <- sample(c("Male", "Female"), length(test_index), replace = TRUE, prob=c(p, 1-p)) %>% factor(levels = c("Male", "Female"))
