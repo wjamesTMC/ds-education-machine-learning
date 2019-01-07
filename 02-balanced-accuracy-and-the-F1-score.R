@@ -14,7 +14,9 @@ library(HistData)
 library(caret)
 library(e1071)
 
-# Prior section set ups
+# 
+# Prior course section example set ups
+#
 data(heights)
 y <- heights$sex
 x <- heights$height
@@ -70,17 +72,27 @@ confusionMatrix(data = y_hat, reference = test_set$sex)
 # optimization purposes. One metric that is preferred over overall accuracy is
 # the average of specificity and sensitivity, referred to as balanced accuracy.
 # Because specificity and sensitivity are rates, it is more appropriate to
-# compute the harmonic average of specificity and sensitivity. In fact, the
-# F1F1-score, a widely used one number summary, is the harmonic average of
-# precision and recall:
+# compute the harmonic average of specificity and sensitivity, like this: 
 
 #    1 / (1/2) * ((1 / recall) + (1 / precision))
 
-# Because it is easier to write, you often see this harmonic average rewritten as:
+# In fact, the F1-score, a widely used one number summary, is the harmonic
+# average of precision and recall. Because it is easier to write, you often see
+# this harmonic average rewritten as:
 
 #    2((precision - recall) / (precision + recall))
 
-# ...when defining F1F1. 
+# ...when defining F1F1. Note: In mathematics, the harmonic mean (sometimes
+# called the subcontrary mean) is one of several kinds of average, and in
+# particular one of the Pythagorean means. Typically, it is appropriate for
+# situations when the average of rates is desired.
+
+#The harmonic mean can be expressed as the reciprocal of the arithmetic mean of
+#the reciprocals of the given set of observations. As a simple example, the
+#harmonic mean of 1, 4, and 4 is <see wikipedia example> 
+#
+#     https://en.wikipedia.org/wiki/Harmonic_mean
+#
 
 # Note that, depending on the context, some type of errors are more costly than
 # others. For example, in the case of plane safety, it is much more important to
@@ -88,10 +100,10 @@ confusionMatrix(data = y_hat, reference = test_set$sex)
 # malfunction before it crashes is a much more costly error than grounding a
 # plane when, in fact, the plane is in perfect condition. In a capital murder
 # criminal case, the opposite is true since a false positive can lead to killing
-# an innocent person. The F1F1-score can be adapted to weigh specificity and
-# sensitivity differently. To do this, we define ββ to represent how much more
+# an innocent person. The F1-score can be adapted to weigh specificity and
+# sensitivity differently. To do this, we define β to represent how much more
 # important sensitivity is compared to specificity and consider a weighted
-# harmonic average:
+# harmonic average using this formula:
 #
 #                                    1
 #                  ____________________________________
@@ -104,7 +116,8 @@ confusionMatrix(data = y_hat, reference = test_set$sex)
 # defaulting to 1.
 
 # Let’s rebuild our prediction algorithm, but this time maximizing the F-score
-# instead of overall accuracy:
+# instead of overall accuracy. We can do this by editing the code and using
+# this instead:
 
 cutoff <- seq(61, 70)
 F_1 <- map_dbl(cutoff, function(x){
@@ -122,7 +135,7 @@ F_1 <- map_dbl(cutoff, function(x){
 max(F_1)
 #> [1] 0.614
 
-# when we use cutoff:
+# when we use cutoff of 66 inches:
 
 best_cutoff <- cutoff[which.max(F_1)]
 best_cutoff
