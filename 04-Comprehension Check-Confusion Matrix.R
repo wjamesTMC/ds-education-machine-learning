@@ -39,7 +39,7 @@ pol <- mean(x == "online")       # percentage online
 nic <- tns * pic                 # number in class
 nol <- tns * pol                 # number online
 
-# Create a vector fol which lists all femails in dat who are in class
+# Create a vector fol which lists all females in dat who are in class
 # Then create the ratio of that number (length(fol)) and the total in class (nic)
 fol <- which(dat$sex == "Female" & dat$type == "inclass")
 pfic <- length(fol) / nic
@@ -57,15 +57,9 @@ pfol
 # Question 2: If you used the type variable to predict sex, what would the
 # prediction accuracy be?
 
-set.seed(2)
-test_index <- createDataPartition(y, times = 1, p = 0.5, list = FALSE)  
-test_set <- y[test_index]
-train_set <- y[-test_index]
-
-y_hat <- sample(c("Male", "Female"), length(test_index), replace = TRUE) %>%
-     factor(levels = levels(test_set))
-
-# GOOD TO THIS POINT ---------------------------------------------
+y_hat <- ifelse(x == "online", "Male", "Female") %>% factor(levels = levels(y))
+mean(y_hat == y)
+# [1] 0.6333333
 
 # Read the # "textbook" that comes with the course:
 #
@@ -102,40 +96,40 @@ mean(y_hat == test_set$sex)
 
 # Question 3: Write a line of code using the table function to show the
 # confusion matrix, assuming the prediction is y_hat and the truth is y.
+table(predicted = y_hat, actual = y)
 
 # Question 4: What is the sensitivity of this prediction?
+# Answer: 0.3824 (see below)
+
+confusionMatrix(data = y_hat, reference = y)
+# Confusion Matrix and Statistics
+# 
+# Reference
+# Prediction Female Male
+# Female     26   13
+# Male       42   69
+# 
+# Accuracy : 0.6333          
+# 95% CI : (0.5508, 0.7104)
+# No Information Rate : 0.5467          
+# P-Value [Acc > NIR] : 0.0195893       
+# 
+# Kappa : 0.2323          
+# Mcnemar's Test P-Value : 0.0001597       
+# 
+# Sensitivity : 0.3824          
+# Specificity : 0.8415          
+# Pos Pred Value : 0.6667          
+# Neg Pred Value : 0.6216          
+# Prevalence : 0.4533          
+# Detection Rate : 0.1733          
+# Detection Prevalence : 0.2600          
+# Balanced Accuracy : 0.6119          
+# 
+# 'Positive' Class : Female 
 
 # Question 5: What is the specificity of this prediction?
-
+# 0.8415 (see above)
 # Question 6: What is the prevalence (% of females) in the dat dataset defined
 # above?
-
-
-# Working area - might be useful
-psm_ic <- ifelse(dat$type == "inclass", "Male", "Female")
-psf_ic <- ifelse(dat$type == "inclass", "Female", "Male")
-psm_ol <- ifelse(dat$type == "online", "Male", "Female")
-psf_ol <- ifelse(dat$type == "online", "Female", "Male")
-
-mean(psm_ic == dat$sex)
-mean(psf_ic == dat$sex)
-mean(psm_ol == dat$sex)
-mean(psf_ol == dat$sex)
-#
-# Working area - probably all wrong
-mean(y_hat == test_set$sex)
-# [1] 0.5066667
-
-mean(y == y_hat)
-
-table(predicted = y_hat, actual = test_set$sex)
-
-test_set %>% 
-     mutate(y_hat = y_hat) %>%
-     group_by(sex) %>% 
-     summarize(accuracy = mean(y_hat == sex))
-
-prev <- mean(y == "Male")
-prev
-
-confusionMatrix(data = y_hat, reference = test_set$sex)
+# 0.4533 (see above)
