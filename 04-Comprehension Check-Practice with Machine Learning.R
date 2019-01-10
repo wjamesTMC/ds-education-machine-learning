@@ -15,13 +15,18 @@ data(iris)
 iris <- iris[-which(iris$Species == 'setosa'),]
 y <- iris$Species
 
+# Question 1 - what line of code is missing (answer - line 3)
 set.seed(2)
 test_index <- createDataPartition(y,times=1,p=0.5, list = FALSE)
 test <- iris[test_index,]
 train <- iris[-test_index,]
 
+# Question 2: figure out the signular feature in the dataset that yields the
+# greatest overall accuracy.
+
 # FYI - plots of the petal width vs. petal length for the two species
 iris %>% ggplot(aes(Sepal.Length, Sepal.Width, col=Species)) + geom_point()
+iris %>% ggplot(aes(Sepal.Width, Sepal.Length, col=Species)) + geom_point()
 iris %>% ggplot(aes(Petal.Length, Petal.Width, col=Species)) + geom_point()
 iris %>% ggplot(aes(Petal.Width, Petal.Length, col=Species)) + geom_point()
 
@@ -84,6 +89,9 @@ max(pw_accuracy)
 best_cutoff <- cutoff_pl[which.max(pl_accuracy)]
 best_cutoff
 # [1] 5
+best_cutoff <- cutoff_pw[which.max(pw_accuracy)]
+best_cutoff
+# [1] 2 (but on the graph it is 1.75)
 
 # Calculating the overall accuracy in the test data
 y_hat <- ifelse(test$Petal.Length > best_cutoff, "virginica", "versicolor") %>%
@@ -145,51 +153,56 @@ mean(y_hat == test$Species)
 # Petal.Width improved to only 0.74. However, the grader says that Petal.Width
 # improves the accuracy more.
 
-# Next section - Question 5: Now we will perform some exploratory data analysis
-# on the data. Notice that Petal.Length and Petal.Width in combination could
-# potentially be more information than either feature alone.
+# Question 5: Now we will perform some exploratory data analysis on the data.
+# Notice that Petal.Length and Petal.Width in combination could potentially be
+# more information than either feature alone.
 #
 # Optimize the combination of the cutoffs for Petal.Length and Petal.Width in
 # the train data and report the overall accuracy when applied to the test
 # dataset. For simplicity, create a rule that if either the length OR the width
 # is greater than the length cutoff or the width cutoff then virginica or
 # versicolor is called. (Note, the F1 will be similarly high in this example.)
-#
-# What is the overall accuracy for the test data now?
-
-# [START HERE]
 
 # Petal Length
 pl_accuracy <- map_dbl(cutoff_pl, function(x){
-     y_hat <- ifelse(test$Petal.Length > x, "virginica", "versicolor") %>%
+     y_hat <- ifelse(train$Petal.Length > x, "virginica", "versicolor") %>%
           factor(levels = levels(test$Species))
-     mean(y_hat == test$Species)
+     mean(y_hat == train$Species)
 })
 max(pl_accuracy)
-# [1] 0.9  [Unchanged]
-
-# Calculating the best cutoff for Petal Length, the more accurate determinator
-pl_best_cutoff <- cutoff_pl[which.max(pl_accuracy)]
-pl_best_cutoff
-# [1] 5  [Unchanged]
+# [1] 0.9
 
 # Petal Width
 pw_accuracy <- map_dbl(cutoff_pw, function(x){
-     y_hat <- ifelse(test$Petal.Width > x, "virginica", "versicolor") %>%
+     y_hat <- ifelse(train$Petal.Width > x, "virginica", "versicolor") %>%
           factor(levels = levels(test$Species))
-     mean(y_hat == test$Species)
+     mean(y_hat == train$Species)
 })
 max(pw_accuracy)
-# [1] 0.74  [Improved from 0.72]
+# [1] 0.72
 
-# Calculating the best cutoff for Petal Width, the more accurate determinator
-pw_best_cutoff <- cutoff_pw[which.max(pw_accuracy)]
-pw_best_cutoff
-# [1] 2  [Unchanged]
+# Calculating the best cutoff for Petal Length, the more accurate determinator
+best_cutoff_pl <- cutoff_pl[which.max(pl_accuracy)]
+best_cutoff_pl
+# [1] 5
+best_cutoff_pw <- cutoff_pw[which.max(pw_accuracy)]
+best_cutoff_pw
 
-# Calculating the overall accuracy in the test data
-y_hat <- ifelse(test$Petal.Length > pl_best_cutoff | test$Petal.Width > pw_best_cutoff, "virginica", "versicolor") %>%
-     factor(levels = levels(test$Species))
+# Create a rule that if either the length OR the width
+# is greater than the length cutoff or the width cutoff then virginica or
+# versicolor is called. (Note, the F1 will be similarly high in this example.)
+#
+# What is the overall accuracy for the test data now?
+# First, develop the algoritm using the training set
 
-mean(y_hat == test$Species)
-confusionMatrix(data = y_hat, reference = test$Species)
+y_hat <- ifelse(train$Petal.Length > 4.7 & train$Petal.Width > 1.75, "virginica","versicolor") %>% factor(levels = levels(train$Species))
+mean(y_hat==train$Species)
+# [1] 0.94
+
+# Then apply this to the test set
+y_hat <- ifelse(test$Petal.Length > 4.7 & test$Petal.Width > 1.75, "virginica","versicolor") %>% factor(levels = levels(test$Species))
+mean(y_hat==test$Species)
+
+# [1] 0.92
+
+# Note - need to figure out WHY I showed 5 and 2 for the cutoffs and others got 4.7 and 1.5. The graphics at the top of this file indicated that 4.7 would be a good choice. Maybe looking at the plots is the best way?
