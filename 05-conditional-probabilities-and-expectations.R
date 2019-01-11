@@ -32,7 +32,7 @@
 
 # We use the notation (X1=x1,…,Xp=xp)to represent the fact that we have observed
 # values x1,…,xn for covariates X1,…,Xpp. This does not imply that the outcome
-# YY will take a specific value. Instead, it implies a specific probability. In
+# Y will take a specific value. Instead, it implies a SPECIFIC PROBABILITY. In
 # particular, we denote the conditional probabilities for each class k:
 
 #         Pr(Y=k∣X1=x1,…,Xp=xp),for k=1,…,K
@@ -43,14 +43,14 @@
 
 #         pk(x)=Pr(Y=k∣X=x),fork=1,…,K
 
-# Note: We will be using the p(x)p(x) notation to represent conditional
-# probabilities as functions of the predictors. Do not confuse it with the pp
-# that represents the number of predictors.
+# Note *** important ***: We will be using the p(x) notation to represent
+# conditional probabilities as functions of the predictors. Do not confuse it
+# with the p that represents the number of predictors.
 
 # Knowing these probabilities can guide the construction of an algorithm that
-# makes the best prediction: for any given xx, we will predict the class kk with
-# the largest probability among p1(x),p2(x),…pK(x). In mathematical notation, we
-# write it like this:
+# makes the best prediction: for any given set of predictors x, we will predict
+# the class k with the largest probability among p1(x),p2(x),…pK(x). In
+# mathematical notation, we write it like this:
 
 #         ^Y=maxpk(x) / k
 
@@ -62,15 +62,19 @@
 
 #         ^Y=maxk^pk(x) / k
 
-# So what we will predict depends on two things 1) how closemaxkpk(x)maxkpk(x)is
-# to 1 and 2) how close our estimate ^pk(x) is to pk(x). We can’t do anything
-# about the first restriction as it is determined by the nature of the problem,
-# so our energy goes into finding ways to best estimate conditional
-# probabilities. The first restriction does imply that we have limits as to how
-# well even the best possible algorithm can perform. You should get used to the
-# idea that while in some challenges we will be able to achieve almost perfect
-# accuracy, digit readers for example, in others our success is restricted by
-# the randomness of the process, movie recommendations for example.
+# So what we will predict depends on two things
+
+#         (1) how close maxkpk(x)is to 1 
+#         (2) how close our estimate ^pk(x) is to pk(x)
+
+# We can’t do anything about the first restriction as it is determined by the
+# nature of the problem, so our energy goes into finding ways to best estimate
+# conditional probabilities. The first restriction does imply that we have
+# limits as to how well even the best possible algorithm can perform. You should
+# get used to the idea that while in some challenges we will be able to achieve
+# almost perfect accuracy, digit readers for example, in others our success is
+# restricted by the randomness of the process, movie recommendations for
+# example.
 
 # Before we continue it is important to remember that defining our prediction by
 # maximizing the probability is not always optimal in practice and depends on
@@ -78,12 +82,12 @@
 # importance. But, even in these cases, having a good estimate of the
 # pk(x),k=1,…,K will suffice for us to build optimal prediction models since we
 # can control the balance between specificity and sensitivity however we wish.
-# For example, we can simply change the cutoffs used to predict one outcome or
+# For example, we can simply change the cutoffs used to predict one class or
 # the other. In the plane example, we may ground the plane anytime the
 # probability of malfunction is higher than 1 in a million as opposed to the
 # default 1/2 used when error types are equally undesired.
 
-# Conditional expectations
+# Conditional expectations and the loss function
 
 # For binary data, you can think of the probability Pr(Y=1∣X=x) as the
 # proportion of 1s in the stratum of the population for which X=x. Many of the
@@ -92,14 +96,16 @@
 # expectations.
 
 # Because the expectation is the average of values y1,…,yn in the
-# population, in the case in which the yys are 0 or 1, the expectation is
+# population, in the case in which the ys are 0 or 1, the expectation is
 # equivalent to the probability of randomly picking a one since the average is
 # simply the proportion of ones:
 
 #         E(Y∣X=x)=Pr(Y=1∣X=x)
 
-# We therefore often only use the expectation to denote both the conditional
-# probability and conditional expectation.
+# # Therefore, the conditional expectation is equal to the conditional
+# probability. We therefore often only use the expectation to denote both the
+# conditional probability and conditional expectation. So why do we even care
+# about the conditional expectation?
 
 # Just like with categorical outcomes, in most applications the same observed
 # predictors do not guarantee the same continuous outcomes. Instead, we assume
@@ -114,11 +120,11 @@
 # what we mean by “better”.
 
 # With binary outcomes we have already described how sensitivity, specificity,
-# accuracy and F1F1 can be used as quantification. However, these metrics are
+# accuracy and F1 can be used as quantification. However, these metrics are
 # not useful for continuous outcomes. The general approach to defining “best” in
 # machine learning is to define a loss function. The most commonly used one is
 # the squared loss function: if ^y is our predictor and y is the observed
-# outcome, the squared loss function is simply:
+# outcome, the squared loss function is simply the difference squared:
 
 #         (^y−y)2
 
@@ -127,12 +133,16 @@
 
 #         MSE = 1/N*RSS =1/N N∑i=1(^yi−yi)2
 
-# In practice, we often report the root mean squared error because it is in the
-# same units as the outcomes:
+# Note that if the outcomes are binary, the mean squared error is equivalent to
+# accuracy since y hat minus y squared is 1 if the prediction was correct and
+# 0 otherwise. In practice, we often report the root mean squared error because
+# it is in the same units as the outcomes:
 
 #      RMSE = √MSE = √ 1/N NN∑ i =1(^yi−yi)2
 
-# But doing the math is often easier with the MSE and is therefore more commonly
+# And this average is just taking the proportion of correct predictions. 
+
+# Doing the math is often easier with the MSE and is therefore more commonly
 # used in text books, since these usually describe theoretical properties of
 # algorithms.
 
@@ -142,23 +152,29 @@
 # as possible.
 
 # Because our data is usually a random sample, we can think of the MSE as a
-# random variable and the observed MSE can be thought of as an estimate of the
-# expected MSE, which in mathematical notation we write like this:
+# random variable. So it is possible that an algorithm minimize mean squared
+# error on a specific data to look, but that in general, another algorithm will
+# do better. We, therefore, try to find algorithms that minimize the mean
+# squared error on average. That is, we want the algorithm that minimizes the
+# average of the squared loss across many, many random samples.
+#
+# The observed MSE can be thought of as an estimate of the expected MSE, which
+# in mathematical notation we write like this:
 
-#      E{1NN∑i=1(^Yi−Yi)2}
+#      E{1/N N∑i=1 (^Yi−Yi)2}
 
 # This is a theoretical concept because in practice we only have one dataset to
 # work with. But, in theory, we think of having a very, very large number, call
-# it BB, of random samples, apply our algorithm to each, obtain an MSE for each
+# it B, of random samples, apply our algorithm to each, obtain an MSE for each
 # random sample, and think of the expected MSE as:
 
-#      1BB∑b=11NN∑i=1(^ybi−ybi)2
+#      1/B B∑b=1 (^ybi−ybi)2
 
-# with ybiyib denoting the iith observation in the bb-th random sample and
-# ^ybiy^ib the resulting prediction obtained from applying the exact same
-# algorithm to the bb-th random sample. But again, in practice, we only observe
-# one random sample so the expected MSE is only theoretical. However, in a later
-# section we describe an approach to estimating the MSE that tries to mimic this
+# with ybi denoting the ith observation in the b-th random sample and ^ybi the
+# resulting prediction obtained from applying the exact same algorithm to the
+# b-th random sample. But again, in practice, we only observe one random sample
+# so the expected MSE is only theoretical. However, in a later section we
+# describe an approach to estimating the MSE that tries to mimic this
 # theoretical quantity.
 
 # Before we continue, note that the there are loss functions other that the
@@ -174,21 +190,24 @@
 
 # So why do we care about the conditional expectation in machine learning? This
 # is because the expected value has an attractive mathematical property: it
-# minimized the MSE. Specifically, of all possible predictors ^Y,
+# minimizes the expected MSE. Specifically, of all possible predictors ^Y,
 
 #         ^Y=E(Y∣X=x) minimizes E{(^Y−Y)2∣X=x}}
 
 # Due to this property, a succinct description of the main task of Machine
-# Learning is that we use data to estimate:
+# Learning is that we use data to estimate the conditional probability:
 
 #         f(x)≡E(Y∣X=x)
 
 # ...for any set of features x=(x1,…,xp). Of course this is easier said than
-# done, since this function can take any shape and pp can be very large.
-# Consider a case in which we only have one predictor xx. The expectation
+# done, since this function can take any shape and p (the number of covariates)
+# can be very large. 
+
+# Consider a case in which we only have one predictor x. The expectation
 # E{Y∣X=x}E{Y∣X=x} can be any function of x: a line, a parabola, a sine wave, a
 # step function, anything. It gets even more complicated when we consider
-# instances with large pp, in which case f(x)f(x) is a function of a
-# multidimensional vector xx. For example, in our digit reader example
-# p=784p=784! The main way in which competing Machine Learning algorithms differ
-# is in the approach to estimating this expectation.
+# instances with large p (a larger number of covariates), in which case f(x)f(x)
+# is a function of a multidimensional vector xx. For example, in our digit
+# reader example p=784! The main way in which competing Machine Learning
+# algorithms differ is in the approach to estimating this expectation, and we
+# are going to learn a few of those approaches.
