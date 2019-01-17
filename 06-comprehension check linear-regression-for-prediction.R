@@ -172,7 +172,9 @@ results <- replicate(100, expr = {
      # Calculate the RMSE
      model_result <- test_set$y - model_prediction
      model_rmse <- sqrt(mean(model_result^2))
-     model_rmse
+     # Need to work here - each time it is a different rmse, but the mean stays the same
+     print(model_rmse)
+     print(mean(model_rmse))
 })
 mean(model_rmse) # two decimal places are sufficient
 sd(model_rmse)   # for a correct answer three decimal places are necessary
