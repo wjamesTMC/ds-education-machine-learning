@@ -1,6 +1,6 @@
 # --------------------------------------------------------------------------------
 #
-# Comprehension Check - Linear regression for prediction
+# Comprehension Check - Linear regression for prediction - Question 1
 #
 # --------------------------------------------------------------------------------
 
@@ -172,12 +172,11 @@ results <- replicate(100, expr = {
      # Calculate the RMSE
      model_result <- test_set$y - model_prediction
      model_rmse <- sqrt(mean(model_result^2))
-     # Need to work here - each time it is a different rmse, but the mean stays the same
-     print(model_rmse)
-     print(mean(model_rmse))
 })
-mean(model_rmse) # two decimal places are sufficient
-sd(model_rmse)   # for a correct answer three decimal places are necessary
+mean(results) # two decimal places are sufficient
+# [1] 2.488661
+sd(results)   # for a correct answer three decimal places are necessary
+# [1] 0.1243952
 
 
 
