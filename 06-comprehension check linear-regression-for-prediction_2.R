@@ -61,7 +61,7 @@ rmse <- function(n) {
      Sigma <- 9*matrix(c(1.0, 0.5, 0.5, 1.0), 2, 2)
      dat <- MASS::mvrnorm(n, c(69, 69), Sigma) %>% 
           data.frame() %>% setNames(c("x", "y"))
-     replicate(100, expr = {
+     results <- replicate(100, expr = {
           
           # Partition the dataset into test and training sets of equal size
           train_index <- createDataPartition(dat$y, p = .5, list = FALSE, times = 1)
@@ -76,6 +76,8 @@ rmse <- function(n) {
           model_result <- test_set$y - model_prediction
           model_rmse <- sqrt(mean(model_result^2))
      })
+     print(mean(results))
+     print(sd(results))
 }
      
 
