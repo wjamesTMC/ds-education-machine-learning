@@ -1,6 +1,6 @@
 # --------------------------------------------------------------------------------
 #
-# Comprehension Check - Linear regression for prediction - Question 6
+# Comprehension Check - Linear regression for prediction - Question 8
 #
 # --------------------------------------------------------------------------------
 
@@ -14,31 +14,27 @@ library(HistData)
 library(caret)
 library(e1071)
 
-# Create a data set using the following code
+# Repeat the exercise from q6 but now create an example in which x_1 and x_2 are
+# highly correlated
 
 set.seed(1)
 n <- 1000
-Sigma <- matrix(c(1.0, 0.75, 0.75, 0.75, 1.0, 0.25, 0.75, 0.25, 1.0), 3, 3)
+Sigma <- matrix(c(1.0, 0.75, 0.75, 0.75, 1.0, 0.95, 0.75, 0.95, 1.0), 3, 3)
 dat <- MASS::mvrnorm(n = 100, c(0, 0, 0), Sigma) %>%
      data.frame() %>% setNames(c("y", "x_1", "x_2"))
 
 x <- cor(dat)
-# Note that y is correlated with both x_1 and x_2 but the two predictors are
-# independent of each other, as seen by cor(dat).
-
 # Use the caret package to partition into a test and training set of equal size.
-# Compare the RMSE when using just x_1, just x_2 and both x_1 and x_2. Train a
-# linear model for each.
+# Compare the RMSE when using just x_1, just x_2, and both x_1 and x_2.
 
-# Which of the three models performs the best (has the lowest RMSE)? [Note:
-# after working the problem, the assumptions are NO REPLICATIONS]
+# Compare the results from q6 and q8. What can you conclude?
      
 # -----------------------------------------------------------------
 # x_1
 # -----------------------------------------------------------------
 set.seed(1)
-n <- 1000 # Note that this become irrelevant because there are 0 replications
-Sigma <- matrix(c(1.0, 0.75, 0.75, 0.75, 1.0, 0.25, 0.75, 0.25, 1.0), 3, 3)
+n <- 1000
+Sigma <- matrix(c(1.0, 0.75, 0.75, 0.75, 1.0, 0.95, 0.75, 0.95, 1.0), 3, 3)
 dat <- MASS::mvrnorm(n = 100, c(0, 0, 0), Sigma) %>%
      data.frame() %>% setNames(c("y", "x_1", "x_2"))
 
@@ -59,14 +55,14 @@ results <- {
      model_rmse <- sqrt(mean(model_result^2))
 }
 mean(results) # two decimal places are sufficient
-# [1] 0.600666
+# [1] was 0.600666 now 0.6592608
 
 # -----------------------------------------------------------------
 # x_2
 # -----------------------------------------------------------------
 set.seed(1)
-n <- 1000 # Note that this become irrelevant because there are 0 replications
-Sigma <- matrix(c(1.0, 0.75, 0.75, 0.75, 1.0, 0.25, 0.75, 0.25, 1.0), 3, 3)
+n <- 1000
+Sigma <- matrix(c(1.0, 0.75, 0.75, 0.75, 1.0, 0.95, 0.75, 0.95, 1.0), 3, 3)
 dat <- MASS::mvrnorm(n = 100, c(0, 0, 0), Sigma) %>%
      data.frame() %>% setNames(c("y", "x_1", "x_2"))
 
@@ -87,12 +83,12 @@ results <- {
      model_rmse <- sqrt(mean(model_result^2))
 }
 mean(results) # two decimal places are sufficient
-# [1]0.630699
+# [1] was 0.630699 now 0.640081
 
 # x_1 and x_2
 set.seed(1)
-n <- 1000 # Note that this become irrelevant because there are 0 replications
-Sigma <- matrix(c(1.0, 0.75, 0.75, 0.75, 1.0, 0.25, 0.75, 0.25, 1.0), 3, 3)
+n <- 1000
+Sigma <- matrix(c(1.0, 0.75, 0.75, 0.75, 1.0, 0.95, 0.75, 0.95, 1.0), 3, 3)
 dat <- MASS::mvrnorm(n = 100, c(0, 0, 0), Sigma) %>%
      data.frame() %>% setNames(c("y", "x_1", "x_2"))
 
@@ -113,4 +109,4 @@ results <- {
      model_rmse <- sqrt(mean(model_result^2))
 }
 mean(results) # two decimal places are sufficient
-# [1] 0.3070962
+# [1] was 0.3070962 now 0.6597865
