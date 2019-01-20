@@ -15,12 +15,15 @@ library(caret)
 library(e1071)
 
 # Repeat the exercise from q6 but now create an example in which x_1 and x_2 are
-# highly correlated
+# highly correlated. Compare the results from q6 and q8. What can you conclude?
+
+# Answer: Adding extra predictors can improve RMSE substantially, but not when
+# the added predictors are highly correlated with other predictors.
 
 set.seed(1)
 n <- 1000
 Sigma <- matrix(c(1.0, 0.75, 0.75, 0.75, 1.0, 0.95, 0.75, 0.95, 1.0), 3, 3)
-dat <- MASS::mvrnorm(n = 100, c(0, 0, 0), Sigma) %>%
+
      data.frame() %>% setNames(c("y", "x_1", "x_2"))
 
 x <- cor(dat)
@@ -110,3 +113,8 @@ results <- {
 }
 mean(results) # two decimal places are sufficient
 # [1] was 0.3070962 now 0.6597865
+
+# Comparisons
+# x_1  was 0.600666  now 0.6592608
+# x_2  was 0.630699  now 0.640081
+# both was 0.3070962 now 0.6597865
