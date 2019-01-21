@@ -25,14 +25,16 @@ data("mnist_27")
 # characterized by having many predictors. So let's go back to the digit
 # example, in which we had 784 predictors. However, for illustrative purpose, we
 # would look at a subset of this data set, where we only have two predictors and
-# two we will start by simplifying this problem to one with 2 predictors and two
-# categories (classes) We are not quite ready to build algorithms with 784
-# predictors so we will extract two simple predictors from the 784: the
-# proportion of dark pixels that are in the upper left quadrant (X1) and the
-# lower right quadrant (X2). We want to build an algorithm that can determine if
-# a digit is a two or a seven from the two predictors.
+# two we will start by simpli.ing this problem to one with 2 predictors and two
+# categories (classes).
 
-# # To have a more manageable data set, we will select a random sample of 1,000
+# We are not quite ready to build algorithms with 784 predictors so we will
+# extract two simple predictors from the 784: the proportion of dark pixels that
+# are in the upper left quadrant (X1) and the lower right quadrant (X2). We want
+# to build an algorithm that can determine if a digit is a two or a seven from
+# the two predictors.
+
+# To have a more manageable data set, we will select a random sample of 1,000
 # digits from the training set that has 60,000 digits. 500 will be in the
 # training set, and 500 will be in the test set. We actually include these
 # examples in the DS Lab package.
@@ -61,6 +63,15 @@ geom_point()
 # We can start getting a sense for why these predictors are useful, but also why
 # the problem will be somewhat challenging.
 
+Now let's look at the original images corresponding
+to the largest and smallest values of the second predictor, x2, which
+represents the lower right quadrant.
+Here we see that they're both sevens.
+The seven on the left has a lot of black on the lower right quadrant.
+The seven on the right has very little black on the lower right quadrant.
+So we can start getting a sense for why these predictors are informative,
+but also why the problem will be somewhat challenging.
+
 # So let’s try building a machine learning algorithm. We haven’t really learned
 # any algorithms yet, so let’s start with logistic regression. The model is
 # simply:
@@ -68,14 +79,19 @@ geom_point()
 #    p(x1,x2)=Pr(Y=1∣X1=x1,X2=x2)=g−1(β0+β1x1+β2x2)
                                   
 # with g−1g−1 the inverse of the logistic function: g−1(x)=exp(x)/{1+exp(x)}. We
-# fit it like this:
+# can fit it using the glm function like this.:
 
 fit <- glm(y ~ x_1 + x_2, data=mnist_27$train, family="binomial")
 
-# We can now build a decision rule based on the estimate of ^p(x1,x2).
+# # And now we can build a decision rule based on the estimate of the
+# conditional probability  ^p(x1,x2). Whenever it is bigger than 0.5, we predict
+# a seven. Whenever it's not, we predict a two. So we write this code.
 
 p_hat <- predict(fit, newdata = mnist_27$test)
 y_hat <- factor(ifelse(p_hat > 0.5, 7, 2))
+
+# Then we compute the confusion matrix, and we see that we achieve an accuracy
+# of 79%.
 
 confusionMatrix(data = y_hat, reference = mnist_27$test$y)
 #> Confusion Matrix and Statistics
@@ -103,16 +119,16 @@ confusionMatrix(data = y_hat, reference = mnist_27$test$y)
 #>       Balanced Accuracy : 0.753         
 #>                                         
 #>        'Positive' Class : 2             
-#> 
 
 # We get an accuracy of 0.79! Not bad for our first try. But can we do better?
-     
-# Because we constructed the mnist_27 example and we had at our disposal 60,000
-# digits in just the MNIST dataset, we used this to build the true conditional
-# distribution p(x1,x2) Keep in mind that this is something we don’t have access
-# to in practice, but we include it in this example because it lets us compare
-# ^p(x1,x2) to the true p(x1,x2) which teaches us the limitations of different
-# algorithms. Let’s do that here. We can access and plot p(x1,x2) like this:
+# # Now before we continue, I want to point out that, for this particular data
+# set, I know the true conditional probability. This is because I constructed
+# this example using the entire set of 60,000 digits. I use this to build the
+# true conditional probability p of x1, x2. Now note that this is something we
+# don't have access to in practice, but included here in this example because it
+# lets us compare estimates to our true conditional probabilities. And this
+# teaches us the limitations of the different algorithms. So let's do that here.
+# We can access and plot p(x1,x2) like this:
      
 mnist_27$true_p %>% ggplot(aes(x_1, x_2, fill=p)) +
 geom_raster() 
@@ -153,8 +169,11 @@ mnist_27$true_p %>% mutate(p_hat = p_hat) %>%
 
 # IMAGE
 
-# We can see where the mistakes were made mainly come from low values X1 that
-# have either high or low value of X2. Logistic regression can’t catch this.
+# Now to see where the mistakes were made, we can again plot the test data with
+# x1 and x2 plotted against each other and color used to show the label. If we
+# do this, we can see where the mistakes are made. Because logistic regression
+# divides the sevens and the twos with a line, we will miss several points that
+# can't be captured by this shape. Logistic regression can’t catch this.
 
 p_hat <- predict(fit, newdata = mnist_27$true_p)
 mnist_27$true_p %>% mutate(p_hat = p_hat) %>%
@@ -173,14 +192,7 @@ mnist_27$true_p %>% mutate(p_hat = p_hat) %>%
 
 # ---
 
-Now let's look at the original images corresponding
-to the largest and smallest values of the second predictor, x2, which
-represents the lower right quadrant.
-Here we see that they're both sevens.
-The seven on the left has a lot of black on the lower right quadrant.
-The seven on the right has very little black on the lower right quadrant.
-So we can start getting a sense for why these predictors are informative,
-but also why the problem will be somewhat challenging.
+
 So let's try building a machine learning algorithm with what we have.
 We haven't really learned any algorithm yet.
 So let's start with logistic regression.
@@ -189,27 +201,9 @@ The conditional probability of being a seven given the two predictors x1
 and x2 will be a linear function of x1 and x2
 after the logistic transformation.
 
-We can fit it using the glm function like this.
-And now we can build a decision rule based
-on the estimate of the conditional probability.
-Whenever it is bigger than 0.5, we predict a seven.
-Whenever it's not, we predict a two.
-So we write this code.
-Then we compute the confusion matrix, and we
-see that we achieve an accuracy of 79%.
 
-Not bad for our first try.
-But can we do better?
-     Now before we continue, I want to point out that, for this particular data set,
-I know the true conditional probability.
-This is because I constructed this example using
-the entire set of 60,000 digits.
-I use this to build the true conditional probability p of x1, x2.
-Now note that this is something we don't have access to in practice,
-but included here in this example because it lets us compare estimates
-to our true conditional probabilities.
-And this teaches us the limitations of the different algorithms.
-So let's do that here.
+
+
 We can access and plot the true conditional probability.
 We can use this code.
 And it looks like this.
@@ -235,11 +229,6 @@ no chance of capturing the non-linear nature
 of our true conditional probability.
 You can see that the boundary of the true conditional probability
 is a curve.
-Now to see where the mistakes were made, we
-can again plot the test data with x1 and x2 plotted
-against each other and color used to show the label.
-If we do this, we can see where the mistakes are made.
-Because logistic regression divides the sevens and the twos with a line,
-we will miss several points that can't be captured by this shape.
+
 
 
