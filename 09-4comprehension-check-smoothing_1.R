@@ -16,7 +16,7 @@ library(e1071)
 library(purrr)
 library(pdftools)
 library(lubridate)
-install.packages("lubridate")
+
 # In the Wrangling course of this series, PH125.6x, we used the following code
 # to obtain mortality counts for Puerto Rico for 2015-2018:
 
