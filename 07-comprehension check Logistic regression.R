@@ -114,7 +114,8 @@ res <- sapply(delta, function(d){
 qplot(delta, res)
 
 # Which is the correct plot?
-
+# Answer - a linear line of points moving up from lower left to upper right
+# x axis is delta (0 to 3) and y axis is accuracy (going from 0.5 to almost 1.0)
 
 
 
