@@ -16,6 +16,7 @@ library(e1071)
 library(purrr)
 library(pdftools)
 library(lubridate)
+library(stringr)
 
 # In the Wrangling course of this series, PH125.6x, we used the following code
 # to obtain mortality counts for Puerto Rico for 2015-2018:
@@ -53,6 +54,7 @@ dat <- map_df(str_split(pdf_text(fn), "\n"), function(s){
 
 # See the video lecture and literally copy that code when they use the loess
 # function, just change the variables to match your variable names.
+
 total_days <- diff(range(polls_2008$day))
 span <- 28/total_days
 fit_1 <- loess(margin ~ day, degree=1, span = span, data=polls_2008)
