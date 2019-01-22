@@ -29,9 +29,8 @@ make_data <- function(n = 1000, p = 0.5,
      # -1.435958 and 4.842957 where the mean is 2 and sd is 1
      f_1 <- rnorm(n, mu_1, sigma_1)
      
-     # x creates a list of 1000 values ranging between 
-     # -2.538682 and 4.842957 - if there is a match (y == 1, then the 
-     # value is taken from f_1, else the value is f_0)
+     # x creates a list of 1000 values ranging between -2.538682 and 4.842957 -
+     # whenever y == 1, then the value is taken from f_1, else the value is f_0
      x <- ifelse(y == 1, f_1, f_0)
      
      # Creates a list of 526 index entries to create the test set
@@ -69,7 +68,7 @@ dat <- make_data()
 # 500  0.355300038 0
 
 # We have now defined a variable x that is predictive of a binary outcome y. It
-# results in 2 curves: a 0 curve that peaks at around -0.8 and a 1 cureve that
+# results in 2 curves: a 0 curve that peaks at around -0.8 and a 1 curve that
 # peaks around 2 or so. The curves range from -3.0 to +4.25
 
 dat$train %>% ggplot(aes(x, color = y)) + geom_density()
@@ -104,13 +103,18 @@ delta <- seq(0, 3, len=25)
 # [1] 0.000 0.125 0.250 0.375 0.500 0.625 0.750 0.875 1.000 1.125 1.250 1.375 1.500 1.625
 # [15] 1.750 1.875 2.000 2.125 2.250 2.375 2.500 2.625 2.750 2.875 3.000
 
-vector_of_25_data_sets_1_point_each %>% ggplot(aes(delta, mu_1)) +
-     geom(point())
+set.seed(1)
+delta <- seq(0, 3, len = 25)
+res <- sapply(delta, function(d){
+     dat <- make_data(mu_1 = d)
+     fit_glm <- dat$train %>% glm(y ~ x, family = "binomial", data = .)
+     y_hat_glm <- ifelse(predict(fit_glm, dat$test) > 0.5, 1, 0) %>% factor(levels = c(0, 1))
+     mean(y_hat_glm == dat$test$y)
+})
+qplot(delta, res)
 
 # Which is the correct plot?
 
-delta <- seq(0, 3, len=25)
-sapply(delta, make_data)
 
 
 
