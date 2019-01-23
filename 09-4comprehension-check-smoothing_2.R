@@ -1,6 +1,6 @@
 # --------------------------------------------------------------------------------
 #
-# COmprehension check - Smoothing - Question 1
+# COmprehension check - Smoothing - Question 2
 #
 # --------------------------------------------------------------------------------
 
@@ -18,9 +18,7 @@ library(pdftools)
 library(lubridate)
 library(stringr)
 
-# In the Wrangling course of this series, PH125.6x, we used the following code
-# to obtain mortality counts for Puerto Rico for 2015-2018:
-
+# Data set
 fn <- system.file("extdata", "RD-Mortality-Report_2015-18-180531.pdf", package="dslabs")
 dat <- map_df(str_split(pdf_text(fn), "\n"), function(s){
      s <- str_trim(s)
@@ -65,32 +63,71 @@ dat <- map_df(str_split(pdf_text(fn), "\n"), function(s){
 # 10    10     1 2015      75 2015-01-10
 # ... with 1,195 more rows
 
-# Note that dat$date is a vector of 1000 entries like these:
-head(dat$date)
-# [1] "2015-01-01" "2015-01-02" "2015-01-03" "2015-01-04" "2015-01-05" "2015-01-06"
+# ********************************************************************
+#
+# Q2 Work with the same data as in Q1 to plot smooth estimates against day of
+# the year, all on the same plot, but with different colors for each year.
+# Which code produces the desired plot?
+#
+# ********************************************************************
 
-# *** ASSIGNMENT *** 
-# Use the loess function to obtain a smooth estimate of the expected number of
-# deaths as a function of date. Plot this resulting smooth function. Make the
-# span about two months long.
+# dat %>% 
+#      mutate(smooth = predict(fit), day = yday(date), year = as.character(year(date))) %>%
+#      ggplot(aes(day, smooth, col = year)) +
+#      geom_line(lwd = 2)
+# 
+# dat %>% 
+#      mutate(smooth = predict(fit, as.numeric(date)), day = mday(date), year = as.character(year(date))) %>%
+#      ggplot(aes(day, smooth, col = year)) +
+#      geom_line(lwd = 2)
+# 
+# dat %>% 
+#      mutate(smooth = predict(fit, as.numeric(date)), day = yday(date), year = as.character(year(date))) %>%
+#      ggplot(aes(day, smooth)) +
+#      geom_line(lwd = 2)
+# 
+# dat %>% 
+#      mutate(smooth = predict(fit, as.numeric(date)), day = yday(date), year = as.character(year(date))) %>%
+#      ggplot(aes(day, smooth, col = year)) +
+#      geom_line(lwd = 2)
 
-# See the video lecture and literally copy that code when they use the loess
-# function, just change the variables to match your variable names.
-
-# The first thing we find out when trying this is that dat$deaths has 1205 
-# entries and fit$fitted has 1204. There is an # NA in the deaths column that 
-# neesde to be removed.
+# As before, remove the NA from the deaths column
 dat <- dat[!is.na(dat$deaths),]
 
-# Now we can follow the loess example in the prior lecture
+# Base code from the prior comprehension check
 total_days <- diff(range(as.numeric(dat$date)))
 span <- 62/total_days
 
 fit <- loess(deaths ~ as.numeric(date), degree=1, span = span, data=dat)
 
+# Base option (plot by year)
 dat %>% mutate(smooth = fit$fitted, date) %>%
      ggplot(aes(as.numeric(date), deaths)) +
      geom_point(size = 3, alpha = .5, color = "grey") +
      geom_line(aes(as.numeric(date), smooth), color="red")
 
-# Answer: the first of the 4 plots is the match
+# Option 1 - POSSIBLE (shows data for 365 days, with a colored line for each year)
+dat %>% 
+     mutate(smooth = predict(fit), day = yday(date), year = as.character(year(date))) %>%
+     ggplot(aes(day, smooth, col = year)) +
+     geom_line(lwd = 2)
+
+# Option 2 - INCORRECT (shows one month)
+dat %>% 
+     mutate(smooth = predict(fit, as.numeric(date)), day = mday(date), year = as.character(year(date))) %>%
+     ggplot(aes(day, smooth, col = year)) +
+     geom_line(lwd = 2)
+
+# Option 3 - INCORRECT (shows a solid black filled area for a year)
+dat %>% 
+     mutate(smooth = predict(fit, as.numeric(date)), day = yday(date), year = as.character(year(date))) %>%
+     ggplot(aes(day, smooth)) +
+     geom_line(lwd = 2)
+
+# Option 4 - POSSIBLE (shows data for 365 days, with a colored line for each year)
+dat %>% 
+     mutate(smooth = predict(fit, as.numeric(date)), day = yday(date), year = as.character(year(date))) %>%
+     ggplot(aes(day, smooth, col = year)) +
+     geom_line(lwd = 2)
+
+# Answer: Option 4
