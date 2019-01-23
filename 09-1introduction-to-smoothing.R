@@ -25,6 +25,7 @@ library(e1071)
 # to accomplish this feat we assume that the trend is smooth, as in a smooth
 # surface, and the noise is unpredictably wobbly. Something like this.
 
+# ***
 # Part of what we explain here are the assumptions that permit us to extract a
 # trend from the noise. To understand why we cover this topic, note that the
 # concepts behind smoothing techniques are extremely useful in machine learning
@@ -32,13 +33,14 @@ library(e1071)
 # of unknown shapes that we need to estimate in the presence of uncertainty. To
 # explain these concepts, we will focus first on a problem with just one
 # predictor.
+# ***
 
 # Specifically we try to estimate the time trend in the popular vote from the
 # 2008 election, the difference between Obama and McCain. You can load the data
 # like this and we can see a plot here. 
 
-data("polls_s008")
-qplot(day, margin, data = polls_2008)
+data("polls_2008")
+qplot(polls_2008$day, polls_2008$margin, data = polls_2008)
 
 # For the purposes of this example, do not think of it as a forecasting problem.
 # We're simply interested in learning the shape of the trend after collecting
@@ -54,7 +56,7 @@ qplot(day, margin, data = polls_2008)
 
 # To think of this as a machine learning problem, consider that we want to
 # predict y given the day x. And that if we knew it, we would use the
-# conditional expectation, f of x equals expectation of y given x. But we don't
+# conditional expectation, f(x) equals expectation of y given x. But we don't
 # know it, so we have to estimate it. We're going to start by using regression,
 # the only method we know, to see how it does.
  

@@ -48,6 +48,24 @@ dat <- map_df(str_split(pdf_text(fn), "\n"), function(s){
      mutate(date = make_date(year, month, day)) %>%
      filter(date <= "2018-05-01")
 
+# *** resulting data set dat ***
+
+# A tibble: 1,205 x 5
+#     day month year  deaths date      
+# <dbl> <dbl> <chr>  <dbl> <date>    
+# 1     1     1 2015     107 2015-01-01
+# 2     2     1 2015     101 2015-01-02
+# 3     3     1 2015      78 2015-01-03
+# 4     4     1 2015     121 2015-01-04
+# 5     5     1 2015      99 2015-01-05
+# 6     6     1 2015     104 2015-01-06
+# 7     7     1 2015      79 2015-01-07
+# 8     8     1 2015      73 2015-01-08
+# 9     9     1 2015      90 2015-01-09
+# 10    10     1 2015      75 2015-01-10
+# ... with 1,195 more rows
+
+# *** ASSIGNMENT *** 
 # Use the loess function to obtain a smooth estimate of the expected number of
 # deaths as a function of date. Plot this resulting smooth function. Make the
 # span about two months long.

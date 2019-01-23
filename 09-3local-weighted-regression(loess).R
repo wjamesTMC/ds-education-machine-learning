@@ -30,8 +30,8 @@ library(e1071)
 # that are locally straight lines.
 
 # So instead of assuming the function is approximately constant in a window, we
-# assume the function is locally linear. With the linear assumption, we can
-# consider larger window sizes than with a constant.
+# assume the function is *** locally linear ***. With the linear assumption, we
+# can consider larger window sizes than with a constant.
 
 # So instead of the one-week window, we will instead consider a larger window in
 # which the trend is approximately linear. We start with a three-week window and

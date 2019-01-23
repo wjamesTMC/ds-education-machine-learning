@@ -42,7 +42,7 @@ library(e1071)
 
 #    ^f(x0)=1/N0 ∑i∈A0 Yi
 
-# It's just simply the average in the window.
+# *** It's just simply the average in the window ***
 
 # The idea behind bin smoothing is to make this calculation for each value of x.
 # So we make each value of x the center and recompute that average. So in the
@@ -57,8 +57,8 @@ library(e1071)
 # average that was computed.
 
 # By computing this average for every point, we form an estimate of the
-# underlying curve f of x. In this animation, we see the procedure happening,
-# starting at negative 155 all the way up to election day-- day 0. At each value
+# underlying curve f(x). In this animation, we see the procedure happening,
+# starting at negative 155 all the way up to election day - day 0. At each value
 # of x0, we keep the estimate f hat of x0 and move on to the next point.
  
 # The final result, which you can compute using this code, looks like this. 
@@ -68,9 +68,9 @@ fit <- with(polls_2008,
             ksmooth(day, margin, x.points = day, kernel="box", bandwidth = span))
 
 polls_2008 %>% mutate(smooth = fit$y) %>%
-     ggplot(aes(day, margin)) +
+     ggplot(aes(polls_2008$day, polls_2008$margin)) +
      geom_point(size = 3, alpha = .5, color = "grey") + 
-     geom_line(aes(day, smooth), color="red")
+     geom_line(aes(polls_2008$day, smooth), color="red")
 
 # Note that the final result for the bin smoother is quite wiggly. One reason
 # for this is that each time the window moves, two points change. So if we start
@@ -91,7 +91,7 @@ polls_2008 %>% mutate(smooth = fit$y) %>%
 # told the function k-smooth to use the kernel "box."
 
 # That is because the kernel that gives us bin smoother using this formulation
-# looks like a box.# Here's a picture.
+# looks like a box. Here's a picture.
 
 # Now, the k-smooth function provides a way to obtain a smoother estimate. This
 # is by using the normal or Gaussian density to assign weights. So the kernel
@@ -101,14 +101,14 @@ polls_2008 %>% mutate(smooth = fit$y) %>%
  
 # The final result, which you can get using this code, looks like this. 
 
-pan <- 7
+span <- 7
 fit <- with(polls_2008, 
             ksmooth(day, margin,  x.points = day, kernel="normal", bandwidth = span))
 
 polls_2008 %>% mutate(smooth = fit$y) %>%
-     ggplot(aes(day, margin)) +
+     ggplot(aes(polls_2008$day, polls_2008$margin)) +
      geom_point(size = 3, alpha = .5, color = "grey") + 
-     geom_line(aes(day, smooth), color="red")
+     geom_line(aes(polls_2008$day, smooth), color="red")
 
 # Note that the final estimate looks smoother now. Now, there are several
 # functions in R that implement bin smoothers or kernel approaches.
