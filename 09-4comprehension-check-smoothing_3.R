@@ -37,28 +37,14 @@ qplot(x_2, y, data = mnist_27$train)
 # What do you observe?
 # *************************************************************************
 
-# span is not specified in the problem - from the discussions: use this
+# span is not specified in the problem - from the discussions: use 0.04
+library(broom)
 span <- 0.04
-# From the discussions: convert y to a numeric
-fit <- loess(as.numeric(y)~ x_2, degree = 1, span = span, data=mnist_27$train)
-mnist_27 %>% mutate(smooth = fit$fitted, x_2) %>%
-     ggplot(aes(x_2, as.numeric(y))) +
-     eom_point(size = 3, alpha = .5, color = "grey") +
-     geom_line(aes(as.numeric(y), smooth), color="red")
-     
-     
-qplot(x_2, y, data = mnist_27$train)
+fit <- loess(as.numeric(y)~ x_2, degree = 1, span = span, data = mnist_27$train)
+qplot(x_2, fit$fitted, data = mnist_27$train)
 
+mnist_27$train %>% glm(y ~ fit$fitted, family = "binomial", data = .) %>% tidy()
 
-
-
-
-# Base option (plot by year)
-dat %>% mutate(smooth = fit$fitted, date) %>%
-     ggplot(aes(as.numeric(date), deaths)) +
-     geom_point(size = 3, alpha = .5, color = "grey") +
-     geom_line(aes(as.numeric(date), smooth), color="red")
-#
 # Answer options:
 # There is no predictive power and the conditional probability is linear.
 # There is no predictive power and the conditional probability is non-linear.
