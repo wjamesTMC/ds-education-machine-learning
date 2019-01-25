@@ -158,20 +158,15 @@ dim(as.matrix(x_1))
 #
 # --------------------------------------------------------------------------------
 
-# We will learn several useful operations
-# related to matrix algebra.
-# We'll use some of the motivating examples we described in an earlier
-# video to demonstrate this.
-# It is often useful to convert a vector to a matrix.
-# For example, because the variables are pixels on a grid,
-# we can convert the rows of pixel intensities
-# into a matrix representing this grid.
-# We can convert a vector into a matrix with the matrix function
-# and specifying the number of rows and columns
-# the resulting matrix should have.
-# The matrix is filled by column.
-# The first column is filled first, and the second is filled second, and so on.
-# So here's an example to illustrate what we mean.
+# We will learn several useful operations related to matrix algebra. We'll use
+# some of the motivating examples we described in an earlier video to
+# demonstrate this. It is often useful to convert a vector to a matrix. For
+# example, because the variables are pixels on a grid, we can convert the rows
+# of pixel intensities into a matrix representing this grid. We can convert a
+# vector into a matrix with the matrix function and specifying the number of
+# rows and columns the resulting matrix should have. The matrix is filled by
+# column. The first column is filled first, and the second is filled second, and
+# so on. So here's an example to illustrate what we mean.
 
 my_vector <- 1:15
 mat <- matrix(my_vector, 5, 3)
