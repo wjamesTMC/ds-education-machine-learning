@@ -116,54 +116,63 @@ bin_X <- (x > 255/2)*1
 #
 # --------------------------------------------------------------------------------
 
-# For our final challenge in which
-# we're standardizing the rows or the columns,
-# we're going to use vectorization.
-# In R, we subtract a vector from a matrix,
-# the first element of each vector is subtracted
-# from the first row of the matrix.
-# The second element from the vector is subtracted from the second row
-# of the matrix and so on.
-# So using mathematical notation, we would write it like this.
-# This is what R does when you subtract a vector from a matrix.
-# The same holds true for other arithmetic operations.
-# This implies that we can scale each row of a matrix using this simple code.
-# Now, if you want to scale each column, be
-# careful because it does not work for columns.
-# For columns, we would have to transpose a matrix.
-# So we would have to do it like this.
-# We transpose the matrix, subtract the columns, and then transpose it back.
-# For this task, we can also use a function call sweep,
-# which works in a similar way to apply.
-# It takes each entry of a vector and subtracts it
-# from the corresponding row or column.
-# So for example, in this code, we take each column.
-# There's a two there.
-# That tells you it's a column.
-# And it subtracts the column mean from each column and returns the new matrix.
+# For our final challenge in which we're standardizing the rows or the columns,
+# we're going to use vectorization. In R, we subtract a vector from a matrix,
+# the first element of each vector is subtracted from the first row of the
+# matrix. The second element from the vector is subtracted from the second row
+# of the matrix and so on. So using mathematical notation, we would write it
+# like this. This is what R does when you subtract a vector from a matrix. The
+# same holds true for other arithmetic operations. This implies that we can
+# scale each row of a matrix using this simple code.
+
+(x - rowMeans(x)) / rowSds(x)
+
+# Now, if you want to scale each column, be careful because it does not work for
+# columns. For columns, we would have to transpose a matrix. So we would have to
+# do it like this.
+
+t(t(X) - colMeans(X))
+
+# We transpose the matrix, subtract the columns, and then transpose it back. For
+# this task, we can also use a function call sweep, which works in a similar way
+# to apply. It takes each entry of a vector and subtracts it from the
+# corresponding row or column. So for example, in this code, we take each
+# column. There's a two there. That tells you it's a column. And it subtracts
+# the column mean from each column and returns the new matrix.
 # 
-# Now, the function sweep actually has an other argument
-# that lets you define the arithmetic operation.
-# By default, it's subtraction.
-# But we can change it.
+X_mean_0 <- sweep(x, 2, colMeas(x))
+
+# Now, the function sweep actually has an other argument that lets you define
+# the arithmetic operation. By default, it's subtraction. But we can change it.
 # So to divide by the standard deviation, we can do the following.
-# So we have seen powerful ways in which we can use matrix algebra in R
-# to perform certain tasks.
-# Finally, although we do not cover matrix algebra operations such as matrix
-# multiplication, we share here the relevant commands
+
+x_mean_0 <- sweep(x, 2, colMeans(x))
+x_standardized <- sweep(x_mean_0, 2, colSds(x), FUN = "/")
+
+# So we have seen powerful ways in which we can use matrix algebra in R to
+# perform certain tasks. Finally, although we do not cover matrix algebra
+# operations such as matrix multiplication, we share here the relevant commands
 # for those that know the mathematics and want to learn the code.
-# Matrix multiplication is done with the following operation--
-# percent star percent.
-# So the cross-product, for example, can be written like this.
-# We can compute the cross-product directly
-# with the function with that name. cross product
-# x gives us as the cross-product.
-# To compute the inverse of a function, we use solve.
-# Here it is applied to the cross-product.
+
+# Matrix multiplication is done with percent star # percent. So the
+# cross-product, for example, can be written like this.
+
+t(x) %*% x
+
+# We can compute the cross-product directly with the function with that name.
+# cross product x gives us as the cross-product.
+
+crossprod(x)
+
+# To compute the inverse of a function, we use solve. Here it is applied to the
+# cross-product.
+
+solve(crossprod(x))
+
 # Finally, the qr decomposition is readily available by using the qr
 # function like this.
 
-
+qr(x)
 
 
 
