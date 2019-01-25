@@ -20,6 +20,7 @@ class(mnist$train$images)
 x <- mnist$train$images[1:1000, ]
 y <- mnist$train$labels[1:1000]
 length(x[,1])
+length(x)
 dim(x)
 grid <- matrix(x[3,], 28, 28)
 image(1:28, 1:28, grid)
