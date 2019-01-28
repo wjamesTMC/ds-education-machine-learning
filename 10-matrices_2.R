@@ -57,12 +57,11 @@ data.frame(labels = as.factor(y), row_averages = avg) %>%
 
 # From this plot, we see that, not surprisingly, ones use less ink than other
 # digits.
-# 
-# Note that we can also compute the column sums
-# and averages using the functions colSums and colMeans respectively.
-# The package matrixStats adds functions that
-# perform operations on each row or column very efficiently, including
-# the functions rowSds and colSds.
+#
+# Note that we can also compute the column sums and averages using the functions
+# colSums and colMeans respectively. The package matrixStats adds functions that
+# perform operations on each row or column very efficiently, including the
+# functions rowSds and colSds.
 
 library(matrixStats)
 sds <- colSds(x)

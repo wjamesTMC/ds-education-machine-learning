@@ -90,3 +90,51 @@ head(A3)
 A4 <- -x
 head(A4)
 
+# Q5 - Answer is rowMeans()
+
+# Q6 - For each digit in the mnist training data, compute the proportion of
+# pixels that are in the grey area, defined as values between 50 and 205. (To
+# visualize this, you can make a boxplot by digit class.)
+
+mnist <- read_mnist()
+class(mnist$train$images)
+x <- mnist$train$images
+y <- mnist$train$labels
+
+avg <- rowMeans(x)
+
+data.frame(labels = as.factor(y), row_averages = avg) %>%
+     ggplot(aes(labels, row_averages)) +
+     geom_boxplot()
+
+# What proportion of pixels are in the grey area overall, defined as values
+# between 50 and 205?
+
+mnist <- read_mnist()
+class(mnist$train$images)
+x <- mnist$train$images[1:1000, ]
+y <- mnist$train$labels[1:1000]
+
+# All pixels between 50 and 205
+mnist <- read_mnist()
+class(mnist$train$images)
+x <- mnist$train$images
+mean(x)
+# [1] 33.31842
+
+new_x <- x
+new_x[x<50 | x>205] <- 0
+mean(new_x)
+
+bin_x <- x                   # Mean at this point is 30.05152
+bin_x[bin_x < 255/2] <- 0    # Mean at this point is 0 
+bin_x[bin_x > 255/2] <- 1    # Mean at this point is 1
+avg_fullset <- rowsum(bin_x) / 60000
+ 
+
+# data.frame(labels = as.factor(y), row_averages = avg) %>%
+#    ggplot(aes(labels, row_averages)) +
+#    geom_boxplot()
+
+# mean(avg_fullset)
+

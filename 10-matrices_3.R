@@ -87,28 +87,24 @@ mat
 #> [4,]    4    0   14
 #> [5,]    5    0   15
 
-# Now for the next challenge, we want a binarize the data.
-# The histogram we just saw suggests that this data is mostly binary
-# pixels, are either ink or no ink.
-# Using what we've learned, we can binarize
-# the data using just matrix operations.
-# For example, using this code we turn all the values
-# below 255 divided by 2 to 0 and above it to 1.
+# Now for the next challenge, we want a binarize the data. The histogram we just
+# saw suggests that this data is mostly binary pixels, are either ink or no ink.
+# Using what we've learned, we can binarize the data using just matrix
+# operations. For example, using this code we turn all the values below 255
+# divided by 2 to 0 and above it to 1.
 
 bin_x <- x
 bin_x[bin_x < 255/2] <- 0 
 bin_x[bin_x > 255/2] <- 1
 
-# But we can also convert it to a matrix using logicals
-# and coerce it into numbers like this.
+# But we can also convert it to a matrix using logicals and coerce it into
+# numbers like this.
 
 bin_X <- (x > 255/2)*1
 
-# Here's an example showing that by converting things into 0 and 1
-# we don't lose that much information.
-# The figure on the left includes all the pixel values.
-# The picture on the right is binarized.
-# You can see it's three.
+# Here's an example showing that by converting things into 0 and 1 we don't lose
+# that much information. The figure on the left includes all the pixel values.
+# The picture on the right is binarized. You can see it's three.
 
 # --------------------------------------------------------------------------------
 #

@@ -33,6 +33,7 @@ mnist <- read_mnist()
 # training data image is a matrix by typing this code. 
 
 class(mnist$train$images)
+# [1] "matrix"
 
 # This matrix represents 60,000 digits. It's a pretty big matrix. So for the
 # example, in this video, we'll take a more manageable subset. We will take the
