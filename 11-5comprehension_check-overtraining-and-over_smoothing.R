@@ -31,11 +31,20 @@ library(matrixStats)
 # seq(1, 101, 3), put your set.seed outside the function and the
 # createDataPartition() block inside the function.
 
+# In Q1 you create test_index with createDataPartition and createDataPartition
+# is used within sapply (do not use set.seed within sapply anymore, do it just
+# once before sapply). Technically speaking, it does not make sense as it leads
+# to different results than having just one split to train and test and checking
+# which of k values works the best for that split. Nevertheless, that's the
+# approach.
+
 # Allow me to add one more hint for Q1: the grader does not expect you to try k=
 # all numbers from 1 to 101 (1, 2, 3...); they're counting by 3s (1, 4, 7).
 # Thus, thy grader does not find the truly correct answer because its test set
 # does not include the associated k value. To get the answer the grader expects,
 # use ks <- seq(1, 101, 3)`
+
+# I solved both Q1 and Q2 with createDataPartition being before map_dbl
 
 # The correct answer for Q1 in terms of the K value is 38.... seq(1,101,3) does
 # not contain the correct value of 38
@@ -43,7 +52,6 @@ library(matrixStats)
 # Just why in videos we do not use sapply, but we are expected to use it in the
 # exercise?
 
-# I solved both Q1 and Q2 with createDataPartition being before map_dbl
 
 #
 # Some sample code
@@ -97,6 +105,32 @@ f1 <- sapply(ks, function(k) {
 })
 
 plot(ks, f1)
+
+#
+# More sample code
+#
+ks <- seq(1, 101, 3)
+y <-heights$sex
+x <- heights$height
+
+set.seed(1)
+
+f1 <- sapply(ks, function(k) {
+     
+     test_index <- createDataPartition(y, times = 1, p = 0.5, list = FALSE) 
+     train_set <- heights[test_index, ]   
+     test_set <- heights[-test_index, ]
+     
+     fit <- knn3(sex ~ height, data = train_set, k = k)   
+     y_hat <- predict(fit, test_set, type = "class") %>% factor(levels = levels(test_set$sex))   
+     
+     F_meas(data = y_hat, reference = factor(train_set$sex))    
+})
+
+max(f1)
+
+plotdat <- cbind(as_data_frame(f1),data_frame(ks)) %>% rowid_to_column("id")
+plotdat %>% ggplot() + geom_line(aes(x = ks, y=value), color = "blue") 
 
 # Q2 - Next we will use the same gene expression example used in the
 # Comprehension Check: Distance exercises. You can load it like this:
