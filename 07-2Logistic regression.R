@@ -207,7 +207,6 @@ heights %>%
 
 #         p(x) = Pr(Y=1|X=x) = β0+β1x
 
-#
 # We assume that the conditional probability of Y being 1 given X is a
 # line--intercept plus slope times height.
 

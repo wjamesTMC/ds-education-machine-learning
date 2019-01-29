@@ -1,10 +1,4 @@
-# --------------------------------------------------------------------------------
-#
-# Comprehension Check - Linear regression for prediction - Question 6
-#
-# --------------------------------------------------------------------------------
-
-# Setup 
+# Setup
 library(tidyverse)
 library(dslabs)
 library(dplyr)
@@ -13,239 +7,172 @@ library(Lahman)
 library(HistData)
 library(caret)
 library(e1071)
+library(matrixStats)
 
-# Create a data set using the following code
+# Q1 - Previously, we used logistic regression to predict sex based on height.
+# Now we are going to use knn to do the same. Use the code described in these
+# videos to select the F_1 measure and plot it against k. Compare to the F_1 of
+# about 0.6 we obtained with regression. Set the seed to 1.
 
+# What is the max value of F_1?
+# At what value of k does the max occur?
+
+library(tidyverse)
+library(caret)
+library(dslabs)
+
+data(heights)
+
+ks <- seq(1, 101, 3)
+y <-heights$sex
+x <- heights$height
 set.seed(1)
-n <- 1000
-Sigma <- matrix(c(1.0, 0.75, 0.75, 0.75, 1.0, 0.25, 0.75, 0.25, 1.0), 3, 3)
-dat <- MASS::mvrnorm(n = 100, c(0, 0, 0), Sigma) %>%
-     data.frame() %>% setNames(c("y", "x_1", "x_2"))
 
-# x <- cor(dat)
-# Note that y is correlated with both x_1 and x_2 but the two predictors are
-# independent of each other, as seen by cor(dat).
+# Create the train and test sets
+test_index <- createDataPartition(y, times = 1, p = 0.5, list = FALSE)
+train_set  <- heights %>% slice(-test_index,)
+test_set   <- heights %>% slice(test_index,)
 
-# Use the caret package to partition into a test and training set of equal size.
-# Compare the RMSE when using just x_1, just x_2 and both x_1 and x_2. Train a
-# linear model for each.
-
-# Which of the three models performs the best (has the lowest RMSE)?
-
-# I did get right answer for Q7 after fixing an apparent typo in the instruction
-# code. set.seed(1) n <- 1000 Sigma <- matrix(c(1.0, 0.75, 0.75, 0.75, 1.0,
-# 0.25, 0.75, 0.25, 1.0), 3, 3) dat <- MASS::mvrnorm(n = 100, c(0, 0, 0), Sigma)
-# %>% <--- correction made here ... n = 1000
-
-# -----------------------------------------------------------------
-# x_1
-# -----------------------------------------------------------------
-set.seed(1)
-n <- 1000
-Sigma <- matrix(c(1.0, 0.75, 0.75, 0.75, 1.0, 0.25, 0.75, 0.25, 1.0), 3, 3)
-dat <- MASS::mvrnorm(n = 1000, c(0, 0, 0), Sigma) %>%
-     data.frame() %>% setNames(c("y", "x_1", "x_2"))
-
-set.seed(1)
-results <- {
-     
-     # Partition the dataset into test and training sets of equal size
-     train_index <- createDataPartition(dat$y, p = .5, list = FALSE, times = 1)
-     train_set <- dat[-train_index,]
-     test_set <- dat[train_index,] 
-     
-     # Train the model
-     model <- lm(y ~ x_1, data = train_set)
-     model_prediction <- predict(model, test_set) 
-     
-     # Calculate the RMSE
-     model_result <- test_set$y - model_prediction
-     model_rmse <- sqrt(mean(model_result^2))
-}
-mean(results) # two decimal places are sufficient
-# [1] 0.7165624
-
-# -----------------------------------------------------------------
-# x_2
-# -----------------------------------------------------------------
-set.seed(1)
-n <- 1000
-Sigma <- matrix(c(1.0, 0.75, 0.75, 0.75, 1.0, 0.25, 0.75, 0.25, 1.0), 3, 3)
-dat <- MASS::mvrnorm(n = 1000, c(0, 0, 0), Sigma) %>%
-     data.frame() %>% setNames(c("y", "x_1", "x_2"))
-
-set.seed(1)
-results <- {
-     
-     # Partition the dataset into test and training sets of equal size
-     train_index <- createDataPartition(dat$y, p = .5, list = FALSE, times = 1)
-     train_set <- dat[-train_index,]
-     test_set <- dat[train_index,] 
-     
-     # Train the model
-     model <- lm(y ~ x_2, data = train_set)
-     model_prediction <- predict(model, test_set) 
-     
-     # Calculate the RMSE
-     model_result <- test_set$y - model_prediction
-     model_rmse <- sqrt(mean(model_result^2))
-}
-mean(results) # two decimal places are sufficient
-# [1] 0.6633693
-
-# x_1 and x_2
-set.seed(1)
-n <- 1000
-Sigma <- matrix(c(1.0, 0.75, 0.75, 0.75, 1.0, 0.25, 0.75, 0.25, 1.0), 3, 3)
-dat <- MASS::mvrnorm(n = 1000, c(0, 0, 0), Sigma) %>%
-     data.frame() %>% setNames(c("y", "x_1", "x_2"))
-
-set.seed(1)
-results <- replicate(n, expr = {
-     
-     # Partition the dataset into test and training sets of equal size
-     train_index <- createDataPartition(dat$y, p = .5, list = FALSE, times = 1)
-     train_set <- dat[-train_index,]
-     test_set <- dat[train_index,] 
-     
-     # Train the model
-     model <- lm(y ~ x_1 + x_2, data = train_set)
-     model_prediction <- predict(model, test_set) 
-     
-     # Calculate the RMSE
-     model_result <- test_set$y - model_prediction
-     model_rmse <- sqrt(mean(model_result^2))
+accuracy <- map_dbl(ks, function(k) {
+     # print(k)
+     knn_fit <- knn3(y ~ ., data = mnist_27$train, k = k)
 })
-mean(results) # two decimal places are sufficient
-# [1] 0.3278193
 
-# Comparisons - putting 1000 in the dat clause, no replication
-# x_1 0.7165624
-# x_2 0.6633693
-# Both 0.3278193
+accuracy %>% print(n=1000)
+accuracy %>% ggplot(aes(k,F_val)) + geom_line()
 
-# Comparisons - leaving 100 in the dat clause, 1000 replications
-# x_1 0.7165624
-# x_2 0.6633693
-# Both 0.3278193
 
-# Comparisons - leaving 100 in the dat clause, no replications
-# x_1 0.600666
-# x_2 0.630699
-# Both 0.3070962
 
-replicate(n, expr = {
-     
-     })
+# Working through the code in the chapter...
+# Let’s use our logistic regression as the standard we need to beat.
 
-# When I finally got it right, it was with the original n=100 inside
-# mcrnorm(n=100,......), no replications of the data, and set.seed(1) twice.
-# Once was just after defining n<-1000, and the other was just before defining
-# the test_index.
+fit_glm <- glm(y ~ x_1 + x_2, data = mnist_27$train, family = "binomial")
+p_hat_logistic <- predict(fit_glm, mnist_27$test)
+y_hat_logistic <- factor(ifelse(p_hat_logistic > 0.5, 7, 2))
+confusionMatrix(data = y_hat_logistic, reference = mnist_27$test$y)$overall[1]
+#> Accuracy 
+#>     0.76
 
-# -----------------------------------------------------------------
-# x_1
-# -----------------------------------------------------------------
-n <- 1000
-set.seed(1)
-Sigma <- matrix(c(1.0, 0.75, 0.75, 0.75, 1.0, 0.25, 0.75, 0.25, 1.0), 3, 3)
-dat <- MASS::mvrnorm(n = 100, c(0, 0, 0), Sigma) %>%
-     data.frame() %>% setNames(c("y", "x_1", "x_2"))
+# Now, lets compare to kNN. We will use the knn3 function from the caret
+# package. But how do we pick the right value for k?
 
-set.seed(1)
-results <- {
-     
-     # Partition the dataset into test and training sets of equal size
-     train_index <- createDataPartition(dat$y, p = .5, list = FALSE, times = 1)
-     train_set <- dat[-train_index,]
-     test_set <- dat[train_index,] 
-     
-     # Train the model
-     model <- lm(y ~ x_1, data = train_set)
-     model_prediction <- predict(model, test_set) 
-     
-     # Calculate the RMSE
-     model_result <- test_set$y - model_prediction
-     model_rmse <- sqrt(mean(model_result^2))
-}
-mean(results) # two decimal places are sufficient
-# [1] 0.600666
+ks <- seq(3, 251, 2)
 
-# -----------------------------------------------------------------
-# x_2
-# -----------------------------------------------------------------
-n <- 1000
-set.seed(1)
-Sigma <- matrix(c(1.0, 0.75, 0.75, 0.75, 1.0, 0.25, 0.75, 0.25, 1.0), 3, 3)
-dat <- MASS::mvrnorm(n = 100, c(0, 0, 0), Sigma) %>%
-     data.frame() %>% setNames(c("y", "x_1", "x_2"))
+# we use the map_df function to repeat the above for each one. For comparative
+# purposes, we will compute the accuracy by using both the training set
+# (incorrect) and the test set (correct):
 
-set.seed(1)
-results <- {
+library(purrr)
+accuracy <- map_df(ks, function(k){
+     knnfit <- knn3(y ~ ., data = mnist_27$train, k = k)
      
-     # Partition the dataset into test and training sets of equal size
-     train_index <- createDataPartition(dat$y, p = .5, list = FALSE, times = 1)
-     train_set <- dat[-train_index,]
-     test_set <- dat[train_index,] 
+     y_hat <- predict(knnfit, mnist_27$train, type = "class")
+     cm_train <- confusionMatrix(data = y_hat, reference = mnist_27$train$y)
+     train_error <- cm_train$overall["Accuracy"]
      
-     # Train the model
-     model <- lm(y ~ x_2, data = train_set)
-     model_prediction <- predict(model, test_set) 
+     y_hat <- predict(knnfit, mnist_27$test, type = "class")
+     cm_test <- confusionMatrix(data = y_hat, reference = mnist_27$test$y)
+     test_error <- cm_test$overall["Accuracy"]
      
-     # Calculate the RMSE
-     model_result <- test_set$y - model_prediction
-     model_rmse <- sqrt(mean(model_result^2))
-}
-mean(results) # two decimal places are sufficient
-# [1] 0.630699
-
-# x_1 and x_2
-n <- 1000
-set.seed(1)
-Sigma <- matrix(c(1.0, 0.75, 0.75, 0.75, 1.0, 0.25, 0.75, 0.25, 1.0), 3, 3)
-dat <- MASS::mvrnorm(n = 100, c(0, 0, 0), Sigma) %>%
-     data.frame() %>% setNames(c("y", "x_1", "x_2"))
-
-set.seed(1)
-results <- {
-     
-     # Partition the dataset into test and training sets of equal size
-     train_index <- createDataPartition(dat$y, p = .5, list = FALSE, times = 1)
-     train_set <- dat[-train_index,]
-     test_set <- dat[train_index,] 
-     
-     # Train the model
-     model <- lm(y ~ x_1 + x_2, data = train_set)
-     model_prediction <- predict(model, test_set) 
-     
-     # Calculate the RMSE
-     model_result <- test_set$y - model_prediction
-     model_rmse <- sqrt(mean(model_result^2))
-}
-mean(results) # two decimal places are sufficient
-# [1] 0.3070962
-
-set.seed(1)
-n <- 1000
-Sigma <- matrix(c(1.0, 0.75, 0.75, 0.75, 1.0, 0.25, 0.75, 0.25, 1.0), 3, 3)
-dat <- MASS::mvrnorm(n = 1000, c(0, 0, 0), Sigma) %>%
-     data.frame() %>% setNames(c("y", "x_1", "x_2"))
-
-set.seed(1)
-results <- replicate(100, expr = {
-     
-     # Partition the dataset into test and training sets of equal size
-     train_index <- createDataPartition(dat$y, p = .5, list = FALSE, times = 1)
-     train_set <- dat[-train_index,]
-     test_set <- dat[train_index,] 
-     
-     # Train the model
-     model <- lm(y ~ x_1 + x_2, data = train_set)
-     model_prediction <- predict(model, test_set) 
-     
-     # Calculate the RMSE
-     model_result <- test_set$y - model_prediction
-     model_rmse <- sqrt(mean(model_result^2))
+     list(train = train_error, test = test_error)
 })
-mean(results) # two decimal places are sufficient
-# [1] 0.3308286
+
+# The final accuracy for this value of k is:
+     
+max(accuracy$test)
+# [1] 0.86
+
+#
+# Code work
+#
+
+question posted 3 months ago by ashimkp
+
+I get max value of F_1 at k=1 F_Val=0.186. Can someone please explain what is wrong with this code:
+     
+library(tidyverse)
+library(caret)
+library(dslabs)
+
+data(heights)
+
+ks <- seq(1, 101, 3)
+y <-heights$sex
+x <- heights$height
+set.seed(1)
+
+test_index<- createDataPartition(y, times=1, p=0.5, list=FALSE)
+
+train_set<- heights[test_index,]
+
+test_set<- heights[-test_index,]
+
+accuracy <- map_df(ks, function(k) {
+     
+     fit<- knn3(sex~height, data=train_set, k=k)
+     
+     y_hat<-predict(fit, test_set, type="class")
+     
+     F_val <- F_meas(data = y_hat, reference = factor(test_set$sex))
+     
+     list(k=k, F_val=F_val)
+     
+})
+
+accuracy
+
+accuracy %>% ggplot(aes(k,F_val)) + geom_line()
+
+# ---------------------------------------------------------------------------
+# Other code snippets
+# ---------------------------------------------------------------------------
+x <- as.matrix(mnist_27$train[,2:3])
+y <- mnist_27$train$y
+knn_fit <- knn3(x, y)
+
+library(tidyverse)
+library(caret)
+library(dslabs)
+data("heights")
+
+set.seed(1)
+
+ind <- createDataPartition(heights$sex,times = 1, p = 0.5, list = FALSE)
+train <- heights %>% slice(ind)
+test <- heights %>% slice(-ind)
+ks = seq(1,101,3)
+
+f1 <- map_dbl(ks, function(x) {
+})
+
+# 
+# Another
+#
+library(tidyverse)
+library(caret)
+library(dslabs)
+
+data(heights)
+
+ks <- seq(1, 101, 3)
+y <-heights$sex
+x <- heights$height
+
+set.seed(1)
+
+f1 <- sapply(ks, function(k) {
+     
+     test_index <- createDataPartition(y, times = 1, p = 0.5, list = FALSE) 
+     train_set <- heights[test_index, ]   
+     test_set <- heights[-test_index, ]
+     
+     fit <- knn3(sex ~ height, data = train_set, k = k)   
+     y_hat <- predict(fit, test_set, type = "class") %>% factor(levels = levels(test_set$sex))   
+     
+     F_meas(data = y_hat, reference = factor(train_set$sex))    
+})
+
+max(f1)
+
+plotdat <- cbind(as_data_frame(f1),data_frame(ks)) %>% rowid_to_column("id")
+plotdat %>% ggplot() + geom_line(aes(x = ks, y=value), color = "blue") 
