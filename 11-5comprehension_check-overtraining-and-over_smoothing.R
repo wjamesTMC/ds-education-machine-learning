@@ -110,16 +110,16 @@ y <- tissue_gene_expression$y
 # Split the data into training and test sets, and report the accuracy you
 # obtain. Try it for k = 1, 3, 5, 7, 9, 11. Set the seed to 1.
 
-train_index <- createDataPartition(y, times = 1, list = FALSE)
-
-train_set_x = x[train_index,] 
-test_set_x  = x[-train_index,] 
-train_set_y = y[train_index] 
-test_set_y  = y[-train_index]
-
 ks <- seq(1, 11, 2)
 accuracy <- map_df(ks, function(k) {
      set.seed(1)
+     train_index <- createDataPartition(y, times = 1, list = FALSE)
+     
+     train_set_x = x[train_index,] 
+     test_set_x  = x[-train_index,] 
+     train_set_y = y[train_index] 
+     test_set_y  = y[-train_index]
+     
      knn_fit <- knn3(train_set_x,train_set_y, k = k) 
      y_hat <- predict(knn_fit, test_set_x, type = "class") 
      test_error <- confusionMatrix(data = y_hat, reference = test_set_y, mode = "everything")$overall["Accuracy"] 
@@ -134,9 +134,9 @@ accuracy %>% ggplot(aes(k, test)) + geom_line()
 
 # Correct answers
 #       k      test
-# [1,]  1 
-# [2,]  3 
+# [1,]  1 0.9784946
+# [2,]  3 0.9677419
 # [3,]  5 0.9892473
-# [4,]  7 
-# [5,]  9 
-# [6,] 11 
+# [4,]  7 0.9677419
+# [5,]  9 0.9569892
+# [6,] 11 0.9569892
