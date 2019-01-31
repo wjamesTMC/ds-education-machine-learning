@@ -57,10 +57,12 @@ fit$results
 #   parameter  Accuracy      Kappa AccuracySD    KappaSD
 # 1      none 0.5123772 0.02541254 0.02403992 0.04670411
 
+# Incorrect - generates an error
 fit <- train(y, x_subset, method = "glm")
 # Error: Please use column names for `x`
 fit$results
 
+# Incorrect - generates an error
 fit <- test(x_subset, y, method = "glm")
 # Error in test(x_subset, y, method = "glm") : 
 # could not find function "test"
@@ -80,7 +82,7 @@ devtools::install_bioc("genefilter")
 
 library(genefilter)
 
-tt <- colttests(x, y)
+tt <- colttests(x, y)   # Need to study and understand t value function
 head(tt)
 
 # Which of the following lines of code correctly creates a vector of the
@@ -151,7 +153,7 @@ ind <- which(pvals <= 0.01)
 newx_subset <- x[,ind]
 
 # Now we can try each fit statement in turn to see which is right, but note
-# that only one has the code stated correctly as in the problem.
+# that only one has the code stated correctly (k values) as in the problem.
 
 # Correct code
 fit <- train(x_subset, y, method = "knn", tuneGrid = data.frame(k = seq(101, 301, 25)))
@@ -202,4 +204,6 @@ ggplot(fit)
 # Use the train function to predict tissue from gene expression in the
 # tissue_gene_expression dataset. Use kNN. What value of k works best?
 
-# Answer: 1
+# Answer: 1 See the example in the videos and text book that although a
+# knn of 1 will work best, it is way overfitted because it essentially
+# is an equality, not a predictor.
