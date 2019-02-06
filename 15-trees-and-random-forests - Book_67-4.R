@@ -1,6 +1,6 @@
 # --------------------------------------------------------------------------------
 #
-# Trees and Random Forests - Random Forests (Book 67.4)
+# Trees and Random Forests - Classification (decision) trees (Book 67.4)
 #
 # --------------------------------------------------------------------------------
 
@@ -16,89 +16,81 @@ library(caret)
 library(e1071)
 library(matrixStats)
 
-# Random forests are a very popular approach
-# that address the shortcomings of decision trees using a clever idea.
-# The goal is to improve prediction performance
-# and reduce instability by averaging multiple decision trees, a forest
-# of trees constructed with randomness.
-# It has two features that help accomplish this.
-# The first feature is referred to as bootstrap aggregation, or bagging.
-# The general scheme for bagging is as follows.
-# First, we build many decision trees, T1 through TB, using the training set.
-# We later explain how we're sure they're different.
-# Second, for every observation j in the test set,
-# we form a prediction y hat j using tree Tj.
-# Now, to obtain a final prediction, we combine the predictions
-# for each tree in two different ways, one for continuous outcomes
-# and one for categorical outcomes.
-# For continuous outcomes, we simply take the average of the y hat j's.
-# For categorical data, we predict y hat with a majority vote.
-# The class that appears most across all the trees is the one we predict.
-# OK, now, but how do we get many decision trees from a single training set?
-# For this, we use the bootstrap.
-# So to create, let's say, B bootstrap trees, we do the following.
-# To create tree Tj from a training set of size N,
-# we create a bootstrap training set by sampling
-# N observations from this training set with replacement.
-# Now we build a decision tree for each one of these bootstrap training sets.
-# And then we apply the algorithm that we just
-# described to get a final prediction.
-# Here's the code for applying random forest to the 2008 polls data.
-# It's quite simple.
-# We do it like this.
-# We can see the algorithm improves as we add more trees.
-# If you plot the object that comes out of this function like this,
-# we get a plot of the error versus the number of trees that have been created.
-# In this case, we see that by the time we get to about 200 trees,
-# the algorithm is not changing much.
-# But note that for more complex problems will require more trees
-# for the algorithm to converge.
-# Here is the final result for the polls 2008 data.
-# Note that the final result is somewhat smooth.
-# It's not a step function like the individual trees.
-# The averaging is what permits estimates that are not step functions.
-# To see this, we've generated an animation
-# to help illustrate the procedure.
-# In the animated figure, you see each of 50 trees, B equals 1 up to 50.
-# Each one is a bootstrap sample which appears in order.
-# For each one of the bootstrap samples, we
-# see the tree that is fitted to that bootstrap sample.
-# And then in blue, we see the result of bagging the trees up to that point.
-# So you can see the blue line changing with time.
-# Now let's look at another example.
-# Let's fit a random forest to our two or seven digit example.
-# The code would look like this.
-# And here's what the conditional probabilities look like.
-# Note that we now have much more flexibility than just a single tree.
-# This particular random forest is a little bit too wiggly.
-# We want something smoother.
-# However, note that we have not optimized the parameters in any way.
-# So let's use the caret package to do this.
-# We can do it using this code.
-# Here we're going to use a different random forest algorithm, Rborist,
-# that is a little bit faster.
-# And here is the final result. We also see that our accuracy is much improved.
-# 
-# So we can control the smoothness of the random forest estimate in several ways.
-# One is to limit the size of each node.
-# We can require the number of points per node to be larger.
-# A second feature of random forest that we have not yet described
-# is that we can use a random selection of features to use for the splits.
-# Specifically, when building each tree at each recursive partition,
-# we only consider a randomly selected subset of predictors
-# to check for the best split.
-# And every tree has a different random selection of features.
-# This reduces correlation between trees in the forests, which
-# in turn improves prediction accuracy.
-# The argument for this tuning parameter in the random forest function is mtry.
-# But each random forest implementation has a different name.
-# You can look at the help file to figure out which one.
-# A disadvantage of random forest is that we lose interpretability.
-# We're averaging hundreds or thousands of trees.
-# However, there's a measure called variable importance
-# that helps us interpret the results.
-# Variable [? importance ?] basically tells us
-# how much each predictor influences the final predictions.
-# We will see an example later.
+# When the outcome is categorical, we refer to these methods as classification
+# trees or decision trees. We use the same partitioning principles, that we used
+# for the continuous case, but with some slight differences to account for the
+# fact that we are now working with categorical data. 
+
+# The first difference is that rather than taking the average at the end of each
+# node, now in the partitions, we predict with the class that has the majority
+# vote in each node. So the class that appears the most in a node, that will be
+# what we predict.
+ 
+# The second difference is that we can no longer use residual sum of squares to
+# decide on the partition because the outcomes are categorical. Well, we could
+# use a naive approach, for example, looking four partitions that minimize
+# training error. Better performing approaches use more sophisticated metrics.
+# Two of the more popular ones are the Gini index and entropy. Let's define
+# those two concepts. 
+
+# If we define p hat m, k as a proportion of observations in partition m that
+# are of class k, then the Gini index is defined as follows.
+
+#    Gini=K∑k=1^pm,k(1−^pm,k)
+ 
+# And entropy is defined in the following way.
+
+#    −K∑k=1^pm,klog(^pm,k), with 0×log(0) defined as 0
+ 
+# Both of these metrics seek to partition observations into subsets that have
+# the same class. They want what is called purity.
+
+# Note that of a partition-- let's call it m--
+#      has only one class--
+#      let's say it's the first one--
+#      then p hat of 1 for that partition is equal to 1,
+# while all the other p hats are equal to 0.
+
+# When this happens, both the Gini index and entropy are 0, the smallest value.
+# So let's look at an example.
+
+# Let's see how classification trees perform on the two or seven example we have
+# examined in previous videos. This is the code that we would write to fit a
+# tree.
+
+train_rpart <- train(y ~ .,
+                     method = "rpart",
+                     tuneGrid = data.frame(cp = seq(0.0, 0.1, len = 25)),
+                     data = mnist_27$train)
+plot(train_rpart)
+
+# We then look at the accuracy versus complexity parameter function, and we can
+# pick the best complexity parameter from this plot. And now we use that tree
+# and see how well we do. We see that we achieve an accuracy of 0.82. We can use
+# this code.
+
+confusionMatrix(predict(train_rpart, mnist_27$test), mnist_27$test$y)$overall["Accuracy"]
+#> Accuracy 
+#>     0.805
+
+# Note that this is better than logistic regression but not as good as the
+# kernel methods.
+
+# If we plot the estimate of the conditional probability obtained with this
+# tree, it shows us the limitations of classification trees. Note that with
+# decision trees, the boundary can't be smoothed. Despite these limitations,
+# classification trees have certain advantages that make them very useful.
+
+# First, they're highly interoperable, even more so than linear regression
+# models or logistic regression models. They're also easy to visualize if
+# they're small enough. Finally, they sometimes model human decision processes.
+# On the other hand, the greedy approach via recursive partitioning is a bit
+# harder to train than, for example, linear regression or k-nearest neighbors.
+
+# Also, it may not be the best performing method since it's not very flexible,
+# and it's actually quite susceptible to changes in the training data. Random
+# forests, explained in the next video, improve on several of these
+# shortcomings.
+
 
 
