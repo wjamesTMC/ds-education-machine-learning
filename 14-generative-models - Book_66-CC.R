@@ -9,6 +9,7 @@ library(tidyverse)
 library(dslabs)
 library(dplyr)
 library(ggplot2)
+library(ggrepel)
 library(Lahman)
 library(HistData)
 library(caret)
@@ -32,7 +33,29 @@ x <- x[, sample(ncol(x), 10)]
 
 # Use the train function to estimate the accuracy of LDA. What is the accuracy?
      
+set.seed(1993)
+data("tissue_gene_expression")
+ind <- which(tissue_gene_expression$y %in% c("cerebellum", "hippocampus"))
+y <- droplevels(tissue_gene_expression$y[ind])
+x <- tissue_gene_expression$x[ind, ]
+x <- x[, sample(ncol(x), 10)]
+train_lda <- train(x,y,method="lda", data = x)
+train_lda
+# Linear Discriminant Analysis 
+# 
+# 69 samples
+# 10 predictors
+# 2 classes: 'cerebellum', 'hippocampus' 
+# 
+# No pre-processing
+# Resampling: Bootstrapped (25 reps) 
+# Summary of sample sizes: 69, 69, 69, 69, 69, 69, ... 
+# Resampling results:
+#      
+#  Accuracy      Kappa    
+# 0.8707879  0.7358585
 
+                                                                                     
 #
 # Q2
 # 
@@ -43,15 +66,20 @@ x <- x[, sample(ncol(x), 10)]
 # both distributions. Plot the mean vectors against each other and determine
 # which predictors (genes) appear to be driving the algorithm.
 
-# Which TWO genes appear to be driving the algorithm?
-# PLCB1
-# RAB1B
-# MSH4
-# OAZ2
-# SPI1
-# SAPCD1
-# HEMK1
+head(train_lda$finalModel)
 
+means <- data.frame(t(train_lda$finalModel$means)) 
+means <- means %>% mutate(gene = as.factor(rownames(means)))
+
+means %>% ggplot(aes(x = cerebellum, y = hippocampus, colour = gene, label = gene)) +
+     ggtitle("LDA Means - Cerebellum vs Hippocampus") +
+     geom_point() +
+     geom_text_repel(aes(label=gene)) +
+     theme(legend.position="none")  
+
+# Which TWO genes appear to be driving the algorithm? - See the plot. Answers:
+# RAB1B
+# OAZ2
 
 #
 # Q3
@@ -68,6 +96,9 @@ y <- droplevels(tissue_gene_expression$y[ind])
 x <- tissue_gene_expression$x[ind, ]
 x <- x[, sample(ncol(x), 10)]
 
+train_qda <- train(x,y,method="qda", data = x)
+train_qda
+
 # Use the train function to estimate the accuracy of QDA.
 # What is the accuracy?
      
@@ -76,14 +107,18 @@ x <- x[, sample(ncol(x), 10)]
 # Q4
 #
 
+means <- data.frame(t(train_qda$finalModel$means)) 
+means <- means %>% mutate(gene = as.factor(rownames(means)))
+
+means %>% ggplot(aes(x = cerebellum, y = hippocampus, colour = gene, label = gene)) +
+     ggtitle("LDA Means - Cerebellum vs Hippocampus") +
+     geom_point() +
+     geom_text_repel(aes(label=gene)) +
+     theme(legend.position="none")  
+
 # Which TWO genes drive the algorithm when using QDA instead of LDA?
-# PLCB1
 # RAB1B
-# MSH4
 # OAZ2
-# SPI1
-# SAPCD1
-# HEMK1
 
 
 #
@@ -99,15 +134,25 @@ x <- x[, sample(ncol(x), 10)]
 # easier to identify the predictors that differ more between groups than based
 # on the plot made in Q2.
 
+set.seed(1993)
+data("tissue_gene_expression")
+ind <- which(tissue_gene_expression$y %in% c("cerebellum", "hippocampus"))
+y <- droplevels(tissue_gene_expression$y[ind])
+x <- tissue_gene_expression$x[ind, ]
+x <- x[, sample(ncol(x), 10)]
+train_lda <- train(x,y,method="lda", data = x, preProcess = "center")
+train_lda
+
+t(train_lda$finalModel$means) %>% data.frame() %>%
+     mutate(predictor_name = rownames(.)) %>%
+     ggplot(aes(cerebellum, hippocampus, label = predictor_name)) +
+     geom_point() +
+     geom_text() +
+     geom_abline()
+
 # Which TWO genes drive the algorithm after performing the scaling?
-# C21orf62
-# PLCB1
-# RAB1B
-# MSH4
 # OAZ2
 # SPI1
-# SAPCD1
-# IL18R1
 
 
 # 
@@ -123,4 +168,20 @@ y <- tissue_gene_expression$y
 x <- tissue_gene_expression$x
 x <- x[, sample(ncol(x), 10)]
 
+train_lda <- train(x,y,method="lda", data = x)
+train_lda
+
 # What is the accuracy using LDA?
+# Linear Discriminant Analysis 
+# 
+# 189 samples
+# 10 predictor
+# 7 classes: 'cerebellum', 'colon', 'endometrium', 'hippocampus', 'kidney', 'liver', 'placenta' 
+# 
+# No pre-processing
+# Resampling: Bootstrapped (25 reps) 
+# Summary of sample sizes: 189, 189, 189, 189, 189, 189, ... 
+# Resampling results:
+#      
+#      Accuracy   Kappa    
+# 0.8194837  0.7816682

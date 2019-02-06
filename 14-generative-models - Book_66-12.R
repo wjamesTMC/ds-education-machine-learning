@@ -18,7 +18,7 @@ library(matrixStats)
 # We have described how when using square loss the conditional expectation or
 # probabilities provide the best approach to developing a decision rule. In a
 # binary case, the best we can do is called Bayes' rule which is a decision rule
-# based on the true conditional probability, probably y equals one given the
+# based on the true conditional probability, probably y equals 1 given the
 # predictors x.
 
 #    p(x)=Pr(Y=1∣X=x)
