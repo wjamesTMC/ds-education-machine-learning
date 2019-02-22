@@ -64,7 +64,7 @@ train_knn <- train(x[,col_index], y,
 
 # This will find the model that maximizes the accuracy.
 
-# # Note that running this code takes quite a bit of time on a standard laptop.
+# Note that running this code takes quite a bit of time on a standard laptop.
 # It could take several minutes. In general, it is a good idea to test out a
 # piece of code with a small subset of the data first to get an idea of timing,
 # before we start running code that might take hours to run or even days. So
@@ -178,7 +178,10 @@ cm$overall["Accuracy"]
 
 # We have indeed improved over k-nearest neighbors.
 
-# FOR BELOW, NEED TO FIND CODE FOR THE DISPLAY OF THE INTEGERS
+# FOR BELOW, NEED TO FIND THE RIGHT CODE FOR THE DISPLAY OF THE INTEGERS
+
+image(matrix(1:784 %in% y_hat_rf, 28, 28))
+
 # Now, let's look at some examples of the original image in the test set in our
 # calls. You can see that that first one we called an eight. It's an eight. The
 # second is also called an eight. Looks like an eight. And all of them look like

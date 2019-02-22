@@ -101,8 +101,12 @@ qplot(sds, bins = 256, color = I("black"))
 nzv <- nearZeroVar(x)
 
 # We can see that columns that are removed, they're the yellow ones in this
-# plot, by simply making an image of the matrix. Once we remove these columns,
-# we end up keeping this many columns. Now we're ready to fit some models.
+# plot, by simply making an image of the matrix. 
+
+image(matrix(1:784 %in% nzv, 28, 28))
+
+# Once we remove these columns, we end up keeping this many columns. Now we're
+# ready to fit some models.
 
 col_index <- setdiff(1:ncol(x), nzv)
 length(col_index)
