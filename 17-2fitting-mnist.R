@@ -47,7 +47,7 @@ length(col_index)
 colnames(x)      <- 1:ncol(mnist$train$images)
 colnames(x_test) <- colnames(mnist$train$images)
 
-# # We're going to add as a name the number of the column. OK, so let's start
+# We're going to add as a name the number of the column. OK, so let's start
 # with knn. The first step is to optimize for the number of neighbors. Now, keep
 # in mind that when we run the algorithm, we will have to compute a distance
 # between each observation in the test set and each observation in the training
@@ -73,7 +73,7 @@ train_knn <- train(x[,col_index], y,
 # how long your code will take. So one thing you can do is test it out on
 # smaller datasets.
 
-# # Here we define n and b as the number of rows that we're going to use and b,
+# Here we define n and b as the number of rows that we're going to use and b,
 # the number of cross-validation folds that we're going to use.
 
 n <- 1000
@@ -86,10 +86,10 @@ train_knn <- train(x[index, col_index], y[index],
                    trControl = control)
 
 
-# # Then we can start increasing these numbers slowly to get an idea of how long
+# Then we can start increasing these numbers slowly to get an idea of how long
 # the final code will take.
 
-# # Now, once we're done optimizing our algorithm, we can fit the entire
+# Now, once we're done optimizing our algorithm, we can fit the entire
 # dataset. So we would code like this.
 
 fit_knn <- knn3(x[ ,col_index], y, k = 3)
@@ -104,7 +104,7 @@ cm$overall["Accuracy"]
 # Accuracy 
 # 0.954 
 
-# # From the specificity and sensitivity output coming from the confusion matrix
+# From the specificity and sensitivity output coming from the confusion matrix
 # function, we see that the eights are the hardest to detect, and the most
 # commonly incorrect predicted digit seven.
 
@@ -121,21 +121,21 @@ cm$byClass[,1:2]
 # Class: 8   0.9072165   0.9988926
 # Class: 9   0.9423077   0.9910714
 
-# # Now, let's see if we can do even better with random forest. With random
+# Now, let's see if we can do even better with random forest. With random
 # forest, computation time is even a bigger challenge than with k-nearest
 # neighbors. For each forest, we need to build hundreds of trees. We also have
 # several parameters that we can tune. Here we use the random forest
 # implementation in the Rborist package, which is faster than the one in the
 # random forest package.
 
-# # It has less features, but it is faster. Because with random forest, the
+# It has less features, but it is faster. Because with random forest, the
 # fitting is the slowest part of the procedure rather than the predicting, as
 # with knn, we will only use five-fold cross-validation. We'll also reduce the
 # number of trees that are fit, since we are not yet building our final model.
 # Finally, we'll take a random subset of observations when constructing each
 # tree.
 
-# # We can change this number with the nSamp argument in the Rborist function.
+# We can change this number with the nSamp argument in the Rborist function.
 # So here's a code to optimize around a random forest.
 
 control <- trainControl(method = "cv", number = 5, p = 0.8)
@@ -148,11 +148,11 @@ train_rf <- train(x[ , col_index], y,
                   tuneGrid = grid,
                   nSamp = 5000)
 
-# # It takes a few minutes to run. We can see the final results using ggplot.
+# It takes a few minutes to run. We can see the final results using ggplot.
 
 ggplot(train_rf)
 
-# # And we can choose the parameters using the best tune component of the
+# And we can choose the parameters using the best tune component of the
 # training object.
 
 train_rf$bestTune

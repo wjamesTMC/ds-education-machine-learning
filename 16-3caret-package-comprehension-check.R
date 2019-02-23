@@ -1,6 +1,6 @@
 # --------------------------------------------------------------------------------
 #
-# TCaret Package - comprehension check
+# The Caret Package - comprehension check
 #
 # --------------------------------------------------------------------------------
 
@@ -132,6 +132,8 @@ class_tree <- train(tissue_gene_expression$x, tissue_gene_expression$y,
                     method = "rpart",
                     tuneGrid = data.frame(cp = seq(0, 0.1, 0.01)))
 
+# Answer: 0.00
+
 #
 # Q4
 #
@@ -159,11 +161,11 @@ confusionMatrix(class_tree)
 # What do you observe happening for the placenta samples?
 # Placenta samples are all accurately classified.
 # Placenta samples are being classified as two similar tissues.
-# Placenta samples are being classified somewhat evenly across tissues. CORRECT
+# Placenta samples are being classified somewhat evenly across tissues. CORRECT ANSWER
 # Placenta samples not being classified into any of the classes.
 
 #
-# q5
+# Q5
 #
 
 # Note that there are only 6 placentas in the dataset. By default, rpart
@@ -228,4 +230,118 @@ text(class_tree$finalModel, cex = 0.75)
 # code first, try using smaller values with ntree. Set the seed to 1991 again.
  
 # What value of mtry maximizes accuracy?
+# Note: The best mtry is stored in: fit_rf$bestTune$mtry
 
+data("tissue_gene_expression")
+set.seed(1991)
+
+x <- tissue_gene_expression$x
+y <- tissue_gene_expression$y
+
+grid <- data.frame(mtry = seq(50, 200, 25)) 
+fit_rf <- train(x, y, method = "rf", 
+                tuneGrid = grid, nodesize = 1) 
+
+fit_rf$bestTune$mtry
+# [1] 100
+
+confusionMatrix(fit_rf)
+#  Accuracy (average) : 0.9971
+
+#
+# Q8
+#
+
+# Use the function varImp on the output of train and save it to an object called imp.
+
+imp <- #BLANK
+imp
+
+# What should replace #BLANK in the code above?
+imp <- varImp(fit)
+imp
+# Notes: if you run this for Q7 using fit_rf, you get:
+# rf variable importance
+# 
+# only 20 most important variables shown (out of 500)
+# 
+# Overall
+# GPA33     100.00
+# BIN1       64.65
+# GPM6B      62.35
+# KIF2C      62.15
+# CLIP3      52.09
+# COLGALT2   46.48
+# CFHR4      35.03
+# SHANK2     34.90
+# TFR2       33.61
+# GALNT11    30.70
+# CEP55      30.49
+# TCN2       27.96
+# CAPN3      27.52
+# CYP4F11    25.74
+# GTF2IRD1   24.89
+# KCTD2      24.34
+# FCN3       22.68
+# SUSD6      22.24
+# DOCK4      22.02
+# RARRES2    21.53
+
+#
+# Q9
+#
+
+# The rpart model we ran above produced a tree that used just seven predictors.
+# Extracting the predictor names is not straightforward, but can be done. If the
+# output of the call to train was fit_rpart, we can extract the names like this:
+     
+tree_terms <- as.character(unique(fit_rpart$finalModel$frame$var[!(fit_rpart$finalModel$frame$var == "<leaf>")]))
+
+# Calculate the variable importance in the Random Forest call for these seven
+# predictors and examine where they rank.
+
+data("tissue_gene_expression")
+set.seed(1991)
+
+x <- tissue_gene_expression$x
+y <- tissue_gene_expression$y
+
+grid <- data.frame(mtry = seq(50, 200, 25)) 
+fit_rf <- train(x, y, method = "rf", 
+                tuneGrid = grid, nodesize = 1) 
+
+tree_terms <- as.character(unique(fit_rpart$finalModel$frame$var[!(fit_rpart$finalModel$frame$var == "<leaf>")]))
+tree_terms
+# [1] "GPA33"  "CLIP3"  "CAPN3"  "CFHR4"  "CES2"   "HRH1"   "B3GNT4"
+
+imp <- varImp(fit_rf)
+imp
+# Notes: if you run this for Q7 using fit_rf, you get:
+# rf variable importance
+# 
+# only 20 most important variables shown (out of 500)
+# 
+# Overall
+# GPA33     100.00
+# BIN1       64.65
+# GPM6B      62.35
+# KIF2C      62.15
+# CLIP3      52.09
+# COLGALT2   46.48
+# CFHR4      35.03
+# SHANK2     34.90
+# TFR2       33.61
+# GALNT11    30.70
+# CEP55      30.49
+# TCN2       27.96
+# CAPN3      27.52
+# CYP4F11    25.74
+# GTF2IRD1   24.89
+# KCTD2      24.34
+# FCN3       22.68
+# SUSD6      22.24
+# DOCK4      22.02
+# RARRES2    21.53
+
+# What is the importance of the CFHR4 gene in the Random Forest call?
+# Answer: 35.03 and rank is 7th
