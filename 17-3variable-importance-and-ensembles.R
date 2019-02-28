@@ -159,8 +159,8 @@ image(matrix(imp, 28, 28))
 # different pollsters to obtain a better estimate of the true support for
 # different candidates.
 
-# In machine learning, one can usually greatly # improve the final result of our
-# predictions by combining the results of # different algorithms.
+# In machine learning, one can usually greatly improve the final result of our
+# predictions by combining the results of different algorithms.
 
 # Here we present a very simple example, where we compute new class
 # probabilities by taking the average of the class probabilities provided by

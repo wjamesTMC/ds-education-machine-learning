@@ -14,6 +14,9 @@ library(HistData)
 library(caret)
 library(e1071)
 
+# All of the R Notebook files (*.rmd) for the lectures are located at:
+# https://github.com/rafalab/dsbook/tree/master/ml
+
 # We start by briefly introducing the caret package, which has several useful
 # functions for building and assessing machine learning methods.
 #
