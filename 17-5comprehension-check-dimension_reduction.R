@@ -27,7 +27,7 @@ library(gam)
 
 data("tissue_gene_expression")
 dim(tissue_gene_expression$x) # dimension of the matrix
-[1] 189 500
+# [1] 189 500
 
 # We want to get an idea of which observations are close to each other, but, as
 # you can see from the dimensions, the predictors are 500-dimensional, making
@@ -142,7 +142,8 @@ for(i in 1:10){
      boxplot(pc$x[,i] ~ tissue_gene_expression$y, main = paste("PC", i))
 }
 
-# Answer: Placenta and Liver
+# Answer: Placenta and Liver for plot 10 but for 7 it is colon an dplacenta
+# Grader accepted placenta and liver
 
 #
 # Q5
@@ -154,44 +155,20 @@ for(i in 1:10){
 # How many PCs are required to reach a cumulative percent variance explained
 # greater than 50%?
 
-df <- summary()
-     
-# Create a data frame from the summary() function to get importance. I also
-# modified it from wide to long (ggplot like it better) and added a few more
-# fields ... the cumulative sum and an index for the PCs.
+# a classmate created a data frame from the summary() function to get importance
+# and added a few more # fields ... the cumulative sum and an index for the PCs.
 
-importance_df <- data.frame(summary(pca)$importance)
-importance_df <- importance_df[2,] %>% 
-     gather(key = pc, value = importance)
-importance_df <- importance_df %>% mutate(pc_index = as.integer(str_remove(importance_df$pc, "PC")))
-importance_df$pc <- factor(importance_df$pc, levels = importance_df$pc[order(importance_df$pc_index)])
-importance_df <- importance_df %>% mutate(cum_sum = cumsum(importance))
+imp_df <- data.frame(summary(pc)$imp)
+imp_df <- imp_df[2,] %>% 
+     gather(key = pc, value = imp)
+imp_df <- imp_df %>% 
+     mutate(pc_index = as.integer(str_remove(imp_df$pc, "PC")))
+imp_df$pc <- factor(imp_df$pc, 
+                           levels = imp_df$pc[order(imp_df$pc_index)])
+imp_df <- imp_df %>% mutate(cum_sum = cumsum(imp))
 
-# Then it's just a matter of using ggplot(), with the PCs on the x and the
-# cumulative sum on the y.
+# Then he used ggplot(), with the PCs on the x and the cumulative sum on the y.
 
-importance_df %>% 
-filter(pc_index < 20) %>% 
-arrange(pc_index, cum_sum) %>% 
-ggplot(aes(x = pc, y = cum_sum, fill=pc)) +
-geom_col() +
-scale_y_continuous(breaks = seq(0,1,0.1)) +
-theme_grey()
-
-I do have one slight tweak to your code above which might save some work.
-
-See what you think about
-
-importance_df <- data.frame(Sum_Exp = summary(pca)$importance[3, ]) %>%
-     rownames_to_column("PCA")
-Which gives this
-
-nada Etc.
-
-Which simplifies things a bit.
-
-#
-# Q6
-#
-
-
+imp_df %>% filter(pc_index < 20) %>% arrange(pc_index, cum_sum) %>%
+     ggplot(aes(x = pc, y = cum_sum, fill=pc)) +
+     geom_col() + scale_y_continuous(breaks = seq(0,1,0.1)) + theme_grey()
