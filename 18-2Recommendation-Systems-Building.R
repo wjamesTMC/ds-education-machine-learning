@@ -185,7 +185,6 @@ predicted_ratings <- test_set %>%
      mutate(pred = mu + b_i + b_u) %>%
      pull(pred)
 
-
 model_2_rmse <- RMSE(predicted_ratings, test_set$rating)
 rmse_results <- bind_rows(rmse_results,
                           data_frame(method="Movie + User Effects Model",  
