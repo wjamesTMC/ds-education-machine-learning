@@ -206,8 +206,8 @@
 # Consider a case in which we only have one predictor x. The expectation
 # E{Y∣X=x}E{Y∣X=x} can be any function of x: a line, a parabola, a sine wave, a
 # step function, anything. It gets even more complicated when we consider
-# instances with large p (a larger number of covariates), in which case f(x)f(x)
-# is a function of a multidimensional vector xx. For example, in our digit
+# instances with large p (a larger number of covariates), in which case f(x)
+# is a function of a multidimensional vector x. For example, in our digit
 # reader example p=784! The main way in which competing Machine Learning
 # algorithms differ is in the approach to estimating this expectation, and we
 # are going to learn a few of those approaches.

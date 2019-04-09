@@ -65,11 +65,9 @@ movielens %>%
 # entire matrix it will crash R. So lets look at a smaller subset. This table
 # shows a very small subset of seven users and five movies.
 
-
-
 # You can see the ratings that each user gave each movie and you also see NA's
 # for movies that they didn't watch or they didn't rate. You can think of the
-# tasking recommendation systems as filling in the NA's in the table we just
+# task in recommendation systems as filling in the NA's in the table we just
 # showed. To see how sparse the entire matrix is, here the matrix for a random
 # sample of 100 movies and 100 users is shown with yellow indicating a user
 # movie combination for which we have a rating.
@@ -122,7 +120,11 @@ test_set <- test_set %>%
 # So if we define yui as the rating for movie i by user u and y hat ui as our
 # prediction, then the residual mean squared error is defined as follows. Here n
 # is a number of user movie combinations and the sum is occurring over all these
-# combinations. Remember that we can interpret the residual mean squared error
+# combinations. 
+
+# SEE LECTURE FOR FORMULA: RMSE = sqrt(1/N E (^yu,i - yu,i)^2)
+
+# Remember that we can interpret the residual mean squared error
 # similar to standard deviation. It is the typical error we make when predicting
 # a movie rating. If this number is much larger than one, we're typically
 # missing by one or more stars rating which is not very good. So let's quickly

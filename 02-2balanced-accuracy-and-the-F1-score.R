@@ -93,7 +93,6 @@ confusionMatrix(data = y_hat, reference = test_set$sex)
 #
 #     https://en.wikipedia.org/wiki/Harmonic_mean
 #
-
 # Note that, depending on the context, some type of errors are more costly than
 # others. For example, in the case of plane safety, it is much more important to
 # maximize sensitivity over specificity: failing to predict a plane will

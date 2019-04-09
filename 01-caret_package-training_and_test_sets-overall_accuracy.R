@@ -47,7 +47,7 @@ x <- heights$height
 # better.
 
 # Training and test sets 
-#
+
 # Ultimately, a machine learning algorithm is evaluated on how it performs in
 # the real world with others running the code. However, when developing an
 # algorithm, we usually have a dataset for which we know the outcomes, as we do
