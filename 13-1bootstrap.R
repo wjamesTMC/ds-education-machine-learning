@@ -96,8 +96,8 @@ quantile(M_stars, c(0.05, 0.95))
 #> 40471 53080
 
 # This is much better than what we get if we mindlessly use the central limit
-# theorem, which would give us this confidence interval, which
-# is entirely wrong.
+# theorem, which would give us this confidence interval, which is entirely
+# wrong.
 
 median(X) + 1.96 * sd(X)/sqrt(N) * c(-1,1)
 #> [1] 36801 60205

@@ -154,9 +154,9 @@ image(as.matrix(d)[order(y), order(y)])
 
 dist(1,2)= √N∑i=1(xi,1−xi,2)2
 
-# To
-# compute the distance between all pairs of the 784 predictors, we can transpose
-# the matrix first and then use the dist function. We can write this code.
+# To compute the distance between all pairs of the 784 predictors, we can
+# transpose the matrix first and then use the dist function. We can write this
+# code.
 
 d <- dist(t(x))
 dim(as.matrix(d))
