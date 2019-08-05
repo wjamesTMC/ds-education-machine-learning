@@ -126,13 +126,12 @@ F_1 <- map_dbl(cutoff, function(x){
 })
 
 # As before, we can plot these F1 measures versus the cutoffs:
-
-#     <<< Insert code when available >>>
+plot(cutoff, F_1)
 
 # We see that it is maximized at F1 value of:
 
 max(F_1)
-#> [1] 0.614
+#> [1] 0.6328125
 
 # when we use cutoff of 66 inches:
 
@@ -149,29 +148,30 @@ y_hat <- ifelse(test_set$height > best_cutoff, "Male", "Female") %>%
 confusionMatrix(data = y_hat, reference = test_set$sex)
 #> Confusion Matrix and Statistics
 #> 
-#>           Reference
-#> Prediction Female Male
-#>     Female     81   67
-#>     Male       38  339
-#>                                         
-#>                Accuracy : 0.8           
-#>                  95% CI : (0.763, 0.833)
-#>     No Information Rate : 0.773         
-#>     P-Value [Acc > NIR] : 0.07819       
-#>                                         
-#>                   Kappa : 0.475         
-#>  Mcnemar's Test P-Value : 0.00629       
-#>                                         
-#>             Sensitivity : 0.681         
-#>             Specificity : 0.835         
-#>          Pos Pred Value : 0.547         
-#>          Neg Pred Value : 0.899         
-#>              Prevalence : 0.227         
-#>          Detection Rate : 0.154         
-#>    Detection Prevalence : 0.282         
-#>       Balanced Accuracy : 0.758         
-#>                                         
-#>        'Positive' Class : Female        
+# Reference
+# Prediction Female Male
+# Female     82   77
+# Male       37  329
+# 
+# Accuracy : 0.7829          
+# 95% CI : (0.7451, 0.8174)
+# No Information Rate : 0.7733          
+# P-Value [Acc > NIR] : 0.3221872       
+# 
+# Kappa : 0.4464          
+# 
+# Mcnemar's Test P-Value : 0.0002595       
+# 
+# Sensitivity : 0.6891          
+# Specificity : 0.8103          
+# Pos Pred Value : 0.5157          
+# Neg Pred Value : 0.8989          
+# Prevalence : 0.2267          
+# Detection Rate : 0.1562          
+# Detection Prevalence : 0.3029          
+# Balanced Accuracy : 0.7497          
+# 
+# 'Positive' Class : Female        
 
 # We now see that we do much better than guessing, that both sensitivity and
 # specificity are relatively high, and that we have built our first machine
